@@ -5,7 +5,7 @@ from administrative import Administrative
 from gerent import Gerent
 
 def show_menu(options):
-    """a
+    """
     Mostra un menú a partir d'un diccionari
 
     Args:
