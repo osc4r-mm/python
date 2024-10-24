@@ -1,5 +1,4 @@
 from user import User
-from db import get_db
 
 class Administrative(User):
     def __init__(self, name, email, password):
