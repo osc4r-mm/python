@@ -10,8 +10,15 @@ class Routine():
         self.durada = durada
         self.db_routines = get_db("routines")
 
-    def add_routine(self, name, description, trainer, horari):
+    def add_routine(self):
         """
         lo mete en mongodb
         """
-        return Routine(name, description, trainer, horari)
+        new_routine = {
+            "name": self.name,
+            "description": self.description,
+            "trainer": self.trainer,
+            "horari": self.horari
+        }
+
+        self.db_routines.insert_one(new_routine)

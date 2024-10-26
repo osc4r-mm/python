@@ -30,9 +30,15 @@ class Trainer(User):
         
         room = tools.get_valid_menu(ROOM_MENU)
         day = tools.get_valid_menu(WEEK_MENU)
-        hour = ""
-        durada = ""
-        horari = {room, day, hour, }
+        hour = tools.get_valid_input("Introdueix el nom (1-55 caràcters): ", lambda user_input: tools.input_string(user_input, 0, 23))
+        durada = 60
+        horari = {
+            "habitacio": room, 
+            "dia": day, 
+            "hora": hour, 
+            "durada": durada
+            }
         
-        durada = ""
-        Routine.add_routine(name, description, trainer, horari, durada)
+        durada = 60
+        routine = Routine(name, description, trainer, horari, durada)
+        routine.add_routine()

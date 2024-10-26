@@ -33,7 +33,13 @@ def input_string(name, min, max):
         return name
     else:
         raise Exception(f"Error: El nom ha de tenir entre {min} i {max} caràcters.")
-        
+
+def input_int(num, min, max):
+    if min <= num <= max:
+        return num
+    else:
+        raise Exception(f"Error: El numero ha de ser entre {min} i {max}.")
+    
 def input_email(email):
     """
     Funcio que demana un correu electronic a l'usuari i el valida si:
