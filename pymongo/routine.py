@@ -2,11 +2,12 @@ import tools
 from db import get_db
 
 class Routine():
-    def __init__(self, name, description, trainer, horari, durada=60):
+    def __init__(self, name, description, trainer, horari, recommendations, durada=60):
         self.name = name
         self.description = description
         self.trainer = trainer
         self.horari = horari
+        self.recommendations = recommendations
         self.durada = durada
         self.db_routines = get_db("routines")
 
@@ -19,29 +20,18 @@ class Routine():
             "descripcio": self.description,
             "entrenador": self.trainer,
             "horari": self.horari,
+            "recomendacions": self.recommendations,
             "durada": self.durada
         }
 
-        # Informacio de l'horari
-        habitacio = self.horari["habitacio"]
-        dia = self.horari["dia"]
-        hora = self.horari["hora"]
-        
-        # Rang de temps a comprovar
-        start_time = hora - 1
-        end_time = start_time + 1
-
-        # Comprova si hi ha alguna rutina en el rang de temps especificat
-        conflict = self.db_routines.find_one({
-            "horari.habitacio": habitacio,
-            "horari.dia": dia,
-            "horari.hora": {"$gte": start_time // 60, "$lt": end_time // 60}}
-        )
-
-        if conflict is None:
-            self.db_routines.insert_one(new_routine)
-        else:
-            print("Error:")
+        self.db_routines.insert_one(new_routine)
+    
+    def list_routines(self):
+        """Obtener i mostrar tots els identificadors de les rutines."""
+        routines = self.db_routines.find({}, {"_id": 1, "nom": 1, "horari": 1})
+        print("Llista de rutines:")
+        for routine in routines:
+            print(f"ID: {routine['_id']} - Nom: {routine['nom']}")
 
     def add_user_to_routine(self, user_id):
         """ Afegir un usuari a la llista d'asistencia """

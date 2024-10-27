@@ -35,8 +35,8 @@ def input_string(name, min, max):
         raise Exception(f"Error: El nom ha de tenir entre {min} i {max} caràcters.")
 
 def input_int(num, min, max):
-    if min <= num <= max:
-        return num
+    if min <= int(num) <= max:
+        return int(num)
     else:
         raise Exception(f"Error: El numero ha de ser entre {min} i {max}.")
     

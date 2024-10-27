@@ -62,7 +62,7 @@ def login():
     user = User.login(email, passwd)
     if user:
         current_user = user
-        print(f"Inici de sessió correcte. Benvingut/da {user["name"]} ({user['rol']}).")
+        print(f"Inici de sessió correcte. Benvingut/da {user.name} ({user.rol}).")
     else:
         print("Credencials incorrectes.")
 
@@ -71,8 +71,7 @@ def main():
     START_MENU = {
         "1": "registrar-se",
         "2": "iniciar sessió",
-        "3": "tancar sessió",
-        "4": "sortir"
+        "3": "sortir"
     }
 
     # Variables globals
@@ -84,25 +83,42 @@ def main():
 
     # Menu d'inici
     while menu:
-        option = tools.show_menu(START_MENU)
-        if option == "1":
-            register()
-        elif option == "2":
-            if current_user:
-                print("Ja n'hi ha una sessio iniciada")
-            else:
+        if current_user == None:
+            option = tools.show_menu(START_MENU)
+            if option == "1":
+                register()
+            elif option == "2":
                 login()
-        elif option == "3":
-            if current_user:
-                User.logout()
-                current_user = None
+            elif option == "3":
+                print("Sortint.")
+                menu = False
             else:
-                print("No has iniciat sessió.")
-        elif option == "4":
-            print("Sortint.")
-            menu = False
+                print("Opció invàlida. Intenta-ho de nou.")
         else:
-            print("Opció invàlida. Intenta-ho de nou.")
+            option = current_user.show_menu_user()
+            if current_user.rol == "usuari":
+                if option == "1":
+                    pass
+                elif option == "2":
+                    current_user.logout()
+                    current_user = None
+
+            elif current_user.rol == "entrenador":
+                if option == "1":
+                    current_user.create_routine()
+                elif option == "2":
+                    current_user.assign_horari()
+                elif option == "3":
+                    current_user.manage_attendance()
+                elif option == "4":
+                    current_user.logout()
+                    current_user = None
+
+
+            elif current_user["rol"] == "administratiu":
+                print("hola")
+            elif current_user["rol"] == "gerent":
+                print("hola")
 
 if __name__ == "__main__":
     main()
