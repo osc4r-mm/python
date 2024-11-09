@@ -28,6 +28,11 @@
                             <button type="submit" class="btn btn-primary btn-lg">Guardar canvis</button>
                         </div>
                     </form>
+                    <hr>
+                    <form method="POST" action="{% url 'delete_user' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg">Eliminar cuenta</button>
+                    </form>
                 </div>
             </div>
         </div>
