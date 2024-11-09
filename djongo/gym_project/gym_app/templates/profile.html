@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">El teu perfil</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="mb-3">
+                <strong>Nom d'usuari:</strong>
+                <p>{{ user.username }}</p>
+            </div>
+            <div class="mb-3">
+                <strong>cognom:</strong>
+                <p>{{ user.last_name }}</p>
+            </div>
+            <div class="mb-3">
+                <strong>Correu electrònic:</strong>
+                <p>{{ user.email }}</p>
+            </div>
+            <div class="mb-3">
+                <strong>Data de registre:</strong>
+                <p>{{ user.date_joined|date:"d-m-Y" }}</p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Editar perfil</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home">
+    <h1>Benvingut al Gimnàs</h1>
+    {% if user.is_authenticated %}
+    <p>Hola, {{ user.username }}!</p>
+    {% else %}
+        <p>Si us plau, inicia sessió per continuar.</p>
+    {% endif %}
+</div>
+{% endblock %}
