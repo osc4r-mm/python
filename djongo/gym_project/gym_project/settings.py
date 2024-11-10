@@ -71,6 +71,8 @@ TEMPLATES = [
 ]
 
 
+MESSAGE_LEVEL = 10
+
 WSGI_APPLICATION = 'gym_project.wsgi.application'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'

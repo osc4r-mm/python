@@ -51,6 +51,7 @@ def edit_profile(request):
         form = EditProfileForm(instance=request.user)  # Precàrrega el formulari amb les dades de l'usuari actual
     return render(request, 'edit_profile.html', {'form': form})
 
+# Vista per eliminar un usuari (requereix estar autenticat)
 @login_required
 def delete_user(request):
     user = request.user
