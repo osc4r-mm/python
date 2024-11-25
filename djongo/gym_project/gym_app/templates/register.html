@@ -10,8 +10,8 @@
                 </div>
                 <div class="card-body"> 
                     <form method="post">
-                        {% csrf_token %} <!-- Token de seguretat CSRF necessari per evitar atacs de seguretat -->
-                        {% for field in form %} <!-- Iteració sobre cada camp del formulari proporcionat per Django -->
+                        {% csrf_token %}
+                        {% for field in form %} <!-- Iteració sobre cada camp del formulari -->
                             <div class="mb-3">
                                 <label for="{{ field.id_for_label }}" class="form-label">
                                     {{ field.label }} <!-- Etiqueta del camp -->
