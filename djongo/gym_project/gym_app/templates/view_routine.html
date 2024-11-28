@@ -1,0 +1,6 @@
+<h2>Rutina de {{ routine.trainer }} a las {{ routine.start_time }}</h2>
+<ul>
+    {% for exercise in exercises %}
+        <li>{{ exercise.exercise.name }} - {{ exercise.duration }} minutos</li>
+    {% endfor %}
+</ul>

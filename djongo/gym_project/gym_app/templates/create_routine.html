@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Crear Rutina</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="mb-4">
+                    {{ form.as_p }}
+                </div>
+
+                <h3 class="mt-4">Selecciona los ejercicios:</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ejercicio</th>
+                            <th>Duración (minutos)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exercise in exercises %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="exercises" value="{{ exercise.id }}" id="exercise_{{ exercise.id }}">
+                                <label for="exercise_{{ exercise.id }}">{{ exercise.name }}</label>
+                            </td>
+                            <td>
+                                <input type="number" name="duration_{{ exercise.id }}" class="form-control" min="1" max="60" placeholder="Duración en minutos">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success">Crear Rutina</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
