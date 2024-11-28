@@ -35,30 +35,14 @@ class RoutineForm(forms.ModelForm):
     ]
     start_time = forms.ChoiceField(choices=TIME_CHOICES, required=True)
 
-    exercises = forms.ModelMultipleChoiceField(
-        queryset=Exercise.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=True,
-        error_messages={'required': 'Debe seleccionar al menos un ejercicio.'}
-    )
-
     class Meta:
         model = Routine
-        fields = ['start_time', 'exercises']
+        fields = ['start_time']  # Solo incluye 'start_time'
 
     def clean(self):
         cleaned_data = super().clean()
-        exercises = cleaned_data.get('exercises')
-        total_duration = 0
-        if not exercises:
-            raise forms.ValidationError("Debe seleccionar al menos un ejercicios.")
-        for exercise in exercises:
-            duration = self.data.get(f"duration_{exercise.id}")  # Obtener la duración del ejercicio en la rutina
-            if duration:
-                total_duration += int(duration)
-        if total_duration > 60:
-            raise forms.ValidationError("La duración total de los ejercicios no puede exceder los 60 minutos.")
         return cleaned_data
+
 
 
 # Formulario intermedio para agregar la duración de cada ejercicio en la rutina

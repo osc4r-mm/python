@@ -12,6 +12,7 @@ urlpatterns = [
     path('profile/delete/', views.delete_user, name='delete_user'),
     path('routine/create/', views.create_routine, name='create_routine'),
     path('exercise/create', views.create_exercise, name='create_exercise'),
+    path('routine/<int:routine_id>/', views.view_routine, name='view_routine'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('admin/', admin.site.urls),
     ]

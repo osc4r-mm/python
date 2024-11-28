@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -80,21 +80,27 @@ def create_routine(request):
     
     if request.method == 'POST':
         form = RoutineForm(request.POST)
-        selected_exercises = request.POST.getlist('exercises')
         if form.is_valid():
             routine = form.save(commit=False)
             routine.trainer = request.user
             routine.save()
 
             # Guardar los ejercicios con sus duraciones
-            if selected_exercises:
-                for exercise_id in selected_exercises:
-                    exercise = Exercise.objects.get(id=exercise_id)
-                    duration = int(request.POST.get(f'duration_{exercise.id}', 0))  # Obtenemos la duración para cada ejercicio
-                    if duration > 0:  # Aseguramos que la duración sea válida
-                        RoutineExercise.objects.create(routine=routine, exercise=exercise, duration=duration)
-                    else:
-                        messages.add_message(request, messages.ERROR, f'Duració no vàlida per l\'exercici {exercise.name}.', extra_tags='danger')
+            selected_exercises = request.POST.getlist('exercises')
+            for exercise_id in selected_exercises:
+                duration = request.POST.get(f'duration_{exercise_id}')
+                if exercise_id and duration:
+                    try:
+                        duration = int(duration)  # Convertir a entero
+                        if duration < 60:
+                            RoutineExercise.objects.create(
+                            routine=routine,
+                            exercise_id=exercise_id,
+                            duration=int(duration)
+                        )
+                    except ValueError:
+                        messages.add_message(request, messages.ERROR, 'Duración inválida para el ejercicio.', extra_tags='danger')
+                        return redirect("create_routine")
             
             messages.success(request, 'Rutina creada correctamente.')
             return redirect('home')
@@ -116,9 +122,8 @@ def create_routine(request):
 
 @login_required
 def view_routine(request, routine_id):
-    routine = Routine.objects.get(id=routine_id)
-    exercises = RoutineExercise.objects.filter(routine=routine)
-
+    routine = get_object_or_404(Routine, id=routine_id)
+    exercises = routine.exercises.all() 
     return render(request, 'view_routine.html', {'routine': routine, 'exercises': exercises})
 
 

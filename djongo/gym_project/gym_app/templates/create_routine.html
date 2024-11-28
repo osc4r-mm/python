@@ -10,13 +10,15 @@
             <form method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="mb-4">
-                    {{ form.as_p }}
+                    <label for="start_time" class="form-label">Hora de inicio</label>
+                    {{ form.start_time }}
                 </div>
 
                 <h3 class="mt-4">Selecciona los ejercicios:</h3>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>Seleccionar</th>
                             <th>Ejercicio</th>
                             <th>Duración (minutos)</th>
                         </tr>
@@ -26,6 +28,8 @@
                         <tr>
                             <td>
                                 <input type="checkbox" name="exercises" value="{{ exercise.id }}" id="exercise_{{ exercise.id }}">
+                            </td>
+                            <td>
                                 <label for="exercise_{{ exercise.id }}">{{ exercise.name }}</label>
                             </td>
                             <td>

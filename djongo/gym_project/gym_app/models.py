@@ -55,7 +55,8 @@ class Routine(models.Model):
 class RoutineExercise(models.Model):
     routine = models.ForeignKey(Routine, on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    duration = models.PositiveIntegerField()
+    duration = models.PositiveIntegerField()  # Duración en minutos
+
     
     def __str__(self):
         return f"{self.exercise.name} - {self.duration} minutos"
