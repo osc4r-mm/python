@@ -1,0 +1,14 @@
+{% block messages %}
+    <!-- Missatges de errors o confirmacions -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <!-- Missatges amb recuadre centrat i colors dependents del tipus -->
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mx-auto" style="max-width: 600px;" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endblock %}
