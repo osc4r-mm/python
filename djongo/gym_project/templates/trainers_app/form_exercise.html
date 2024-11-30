@@ -1,0 +1,52 @@
+{% extends 'trainers_app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 500px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">
+                {% if edit_mode %}
+                    Editar Ejercicio: {{ exercise.name }}
+                {% else %}
+                    Crear Nuevo Ejercicio
+                {% endif %}
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="id_name">Nombre del ejercicio</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_description">Descripción</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_category">Categoría</label>
+                    {{ form.category }}
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        {% if edit_mode %}
+                            Editar Exercici
+                        {% else %}
+                            Crear Ejercici
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+            {% if edit_mode %}
+            <div class="text-center mt-3">
+                <form method="POST" action="{% url 'delete_exercise' exercise.id %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este ejercicio?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg">Eliminar</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

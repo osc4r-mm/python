@@ -1,0 +1,33 @@
+{% extends 'trainers_app/base.html' %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Lista de Rutinas</h1>
+           
+    <div class="text-center mb-4">
+        <a href="{% url 'create_routine' %}" class="btn btn-primary btn-lg">Crear Nueva Rutina</a>
+    </div>
+
+    {% if routines %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for routine in routines %}
+                <div class="col">
+                    <div class="card border-primary h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">Rutina de {{ routine.trainer.username }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Dificultad:</strong> {{ routine.get_dificulty_display }}</p>
+                            <p><strong>Hora de inicio:</strong> {{ routine.start_time|date:"H:i" }}</p>
+                            <p><strong>Duración total:</strong> {{ routine.total_duration }} minutos</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'view_routine' routine.id %}" class="btn btn-primary btn-block">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted">No hay rutinas disponibles.</p>
+    {% endif %}
+{% endblock %}

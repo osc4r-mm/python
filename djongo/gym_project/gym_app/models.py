@@ -25,28 +25,43 @@ class User(AbstractUser):
 
 # Definim el model del exercici
 class Exercise(models.Model):
+    CATEGORY_CHOICES = [
+        ('Força', 'Força'),
+        ('Resistencia', 'Resistencia'),
+        ('Flexibilitat', 'Flexibilitat'),
+        ('Equilibri', 'Equilibri'),
+    ]
+
     name = models.CharField(max_length=255)
     description = models.TextField()
-    category = models.CharField(max_length=50, choices=[
-        ('strength', 'Fuerza'),
-        ('endurance', 'Resistencia'),
-        ('flexibility', 'Flexibilidad'),
-        ('balance', 'Equilibrio'),
-    ])
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
 
     def __str__(self):
         return self.name
 
 # Definim el model de la rutina
 class Routine(models.Model):
-    trainer = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'trainer'})
+    DIFFICULTY_CHOICES = [
+        ('Principiante', 'Principiante'),
+        ('Intermedio', 'Intermedio'),
+        ('Experto', 'Experto'),
+    ]
+    
+    trainer = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        limit_choices_to={'role': 'trainer'}
+    )
     start_time = models.TimeField()
-    dificulty = models.CharField(max_length=50, choices=[
-        ('easy', 'Principiante'),
-        ('normal', 'Intermedio'),
-        ('hard', 'Experto'),
-    ])
-    exercises = models.ManyToManyField(Exercise, through='RoutineExercise')
+    dificulty = models.CharField(
+        max_length=50, 
+        choices=DIFFICULTY_CHOICES,
+        default='easy'
+    )
+    exercises = models.ManyToManyField(
+        Exercise, 
+        through='RoutineExercise'
+    )
 
     def __str__(self):
         return f"Rutina de {self.trainer} a las {self.start_time.strftime('%H:%M')}"
@@ -55,8 +70,9 @@ class Routine(models.Model):
 class RoutineExercise(models.Model):
     routine = models.ForeignKey(Routine, on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    duration = models.PositiveIntegerField()  # Duración en minutos
+    repetitions = models.PositiveIntegerField(blank=True, null=True)
+    duration = models.PositiveIntegerField()
 
     
     def __str__(self):
-        return f"{self.exercise.name} - {self.duration} minutos"
+        return f"{self.exercise.name} - {self.repetitions} reps - {self.duration} minuts"

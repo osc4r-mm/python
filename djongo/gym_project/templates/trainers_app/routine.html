@@ -1,0 +1,34 @@
+{% extends 'trainers_app/base.html' %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Detalles de la Rutina</h1>
+
+    <div class="container">
+        <!-- Información de la rutina -->
+        <div class="mb-4">
+            <h3>Rutina de {{ routine.trainer.username }}</h3>
+            <p><strong>Hora de inicio:</strong> {{ routine.start_time|date:"H:i" }}</p>
+            <p><strong>Dificultad:</strong> {{ routine.get_dificulty_display }}</p>
+            <p><strong>Duración total:</strong> {{ total_duration }} minutos</p>
+        </div>
+
+        <h4>Ejercicios</h4>
+        <!-- Lista de ejercicios asociados a la rutina -->
+        <div class="list-group">
+            {% for r_ex in routine_exercises %}
+                <div class="list-group-item">
+                    <p><strong>Ejercicio:</strong> {{ r_ex.exercise.name }}</p>
+                    <p><strong>Repeticiones:</strong> {% if routine.repetitions %}{{ r_ex.repetitions }}{% else %}N/A{% endif %}</p>
+                    <p><strong>Duración:</strong> {{ r_ex.duration }} minutos</p>
+                </div>
+            {% empty %}
+                <p>No hay ejercicios asociados a esta rutina.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Botón de vuelta -->
+        <div class="mt-4 text-center">
+            <a href="{% url 'trainer_dashboard' %}" class="btn btn-secondary">Volver al Dashboard</a>
+        </div>
+    </div>
+{% endblock %}
