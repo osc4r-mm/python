@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.forms import modelformset_factory
 from django.contrib import messages
 from gym_app.models import *
 from .models import *
@@ -48,68 +49,44 @@ def view_routine(request, routine_id):
 @login_required
 @role_required('trainer')
 def create_routine(request):
+    RoutineExerciseFormSet = modelformset_factory(
+        RoutineExercise,
+        form=RoutineExerciseForm,
+        extra=1,
+        can_delete=True
+    )
+
     if request.method == 'POST':
-        form = RoutineForm(request.POST)
-        if form.is_valid():
-            routine = form.save(commit=False)
+        routine_form = RoutineForm(request.POST)
+        formset = RoutineExerciseFormSet(request.POST)
+
+        if routine_form.is_valid() and formset.is_valid():
+            routine = routine_form.save(commit=False)
             routine.trainer = request.user
             routine.save()
 
-            # Guardar los ejercicios con sus duraciones
-            exercise_count = 0
-            valid = True
+            for form in formset:
+                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                    routine_exercise = form.save(commit=False)
+                    routine_exercise.routine = routine
+                    routine_exercise.save()
 
-            while True:
-                exercise_id = request.POST.get(f'exercise_{exercise_count}')
-                duration = request.POST.get(f'duration_{exercise_count}')
-                
-                if not exercise_id:  # Si no hay más ejercicios, salir del bucle
-                    break
-                
-                if not exercise_id or not duration:  # Validar que haya ejercicio y duración
-                    messages.add_message(request, messages.ERROR, 'Todos los ejercicios deben tener un ejercicio y una duración asignados.', extra_tags='danger')
-                    valid = False
-                    break
-
-                try:
-                    duration = int(duration)  # Convertir a entero
-                    if 1 <= duration <= 60:  # Validar que la duración esté en el rango correcto
-                        RoutineExercise.objects.create(
-                            routine=routine,
-                            exercise_id=exercise_id,
-                            duration=duration
-                        )
-                    else:
-                        messages.add_message(request, messages.ERROR, 'La duración debe estar entre 1 y 60 minutos.', extra_tags='danger')
-                        valid = False
-                        return redirect("create_routine")
-                except ValueError:
-                    messages.add_message(request, messages.ERROR, 'Duración inválida para el ejercicio.', extra_tags='danger')
-                    valid = False
-                    return redirect("create_routine")
-                
-                exercise_count += 1
-
-                if valid:
-                    messages.success(request, 'Rutina creada correctamente.')
-                    return redirect('view_routines')
-                else:
-                    return redirect("create_routine")
-            
             messages.success(request, 'Rutina creada correctamente.')
             return redirect('view_routines')
         else:
             messages.add_message(request, messages.ERROR, 'Error al crear la rutina.', extra_tags='danger')
     else:
-        form = RoutineForm()
+        routine_form = RoutineForm()
+        formset = RoutineExerciseFormSet(queryset=RoutineExercise.objects.none())
 
     exercises = Exercise.objects.all()
     if not exercises:
         messages.warning(request, 'No hay ejercicios disponibles para seleccionar.')
     
     context = {
-        'form': form,
-        'exercises': exercises,
+        'routine_form': routine_form,
+        'formset': formset,
+        'exercises': Exercise.objects.all(),
     }
     return render(request, 'trainers_app/form_routine.html', context)
 

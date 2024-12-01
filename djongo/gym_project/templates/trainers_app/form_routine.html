@@ -15,22 +15,24 @@
         <div class="card-body">
             <form method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
+                {{ formset.management_form }}
+                <!-- Formulario de rutina -->
+                <div class="mb-4">
+                    <label for="id_name" class="form-label">Nombre de la rutina</label>
+                    {{ routine_form.name }}
+                </div>
                 {% if edit_mode %}
                     <div class="mb-4">
-                        <label for="trainer" class="form-label">Entrenador</label>
-                        <select name="trainer" class="form-control" required>
-                            <option value="">Selecciona un entrenador</option>
-                            {% for trainer in trainers %}
-                                <option value="{{ trainer.id }}">{{ trainer.username }}</option>
-                            {% endfor %}
-                        </select>
+                        <label for="id_trainer" class="form-label">Entrenador</label>
+                        {{ routine_form.trainer }}
                     </div>
                 {% endif %}
                 <div class="mb-4">
-                    <label for="dificulty" class="form-label">Dificultat</label>
-                    {{ form.dificulty }}
+                    <label for="id_difficulty" class="form-label">Dificultad</label>
+                    {{ routine_form.difficulty }}
                 </div>
 
+                <!-- Ejercicios en la rutina -->
                 <h3 class="mt-4">Selecciona los ejercicios:</h3>
                 <table class="table table-bordered" id="exercise-table">
                     <thead>
@@ -41,22 +43,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <select name="exercise_0" class="form-control" required>
-                                    <option value="">Selecciona un ejercicio</option>
-                                    {% for exercise in exercises %}
-                                        <option value="{{ exercise.id }}">{{ exercise.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="duration_0" class="form-control" min="1" max="60" placeholder="Duración en minutos" required>
-                            </td>
-                            <td>
-                                <input type="number" name="repetitions_0" class="form-control" min="0" placeholder="Repeticiones (opcional)">
-                            </td>
-                        </tr>
+                        {% for form_ex in formset %}
+                            <tr>
+                                <td>
+                                    {{ form_ex.exercise }}
+                                </td>
+                                <td>
+                                    {{ form_ex.duration }}
+                                </td>
+                                <td>
+                                    {{ form_ex.repetitions }}
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
 
@@ -72,9 +71,10 @@
                     </button>
                 </div>
             </form>
+
             {% if edit_mode %}
             <div class="text-center mt-3">
-                <form method="POST" action="{% url 'delete_routine' routine.id %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta rutina?');">
+                <form method="POST" action="{% url 'delete_routine' routine.id %}" onsubmit="return confirm('¿Estás segur de eliminar aquesta rutina?');">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-lg">Eliminar</button>
                 </form>
@@ -85,32 +85,31 @@
 </div>
 
 <script>
-    let exerciseCount = 1;
+let exerciseCount = {{ formset.total_form_count }};  // Usa total_form_count para obtener el número total de formularios
 
-    document.getElementById('add-exercise').addEventListener('click', function() {
-        const tableBody = document.querySelector('#exercise-table tbody');
-        const newRow = document.createElement('tr');
+document.getElementById('add-exercise').addEventListener('click', function() {
+    const tableBody = document.querySelector('#exercise-table tbody');
+    const newRow = document.createElement('tr');
 
-        newRow.innerHTML = `
-            <td>
-                <select name="exercise_${exerciseCount}" class="form-control" required>
-                    <option value="">Selecciona un ejercicio</option>
-                    {% for exercise in exercises %}
-                        <option value="{{ exercise.id }}">{{ exercise.name }}</option>
-                    {% endfor %}
-                </select>
-            </td>
-            <td>
-                <input type="number" name="duration_${exerciseCount}" class="form-control" min="1" max="60" placeholder="Duración en minutos" required>
-            </td>
-            <td>
-                <input type="number" name="repetitions_${exerciseCount}" class="form-control" min="0" placeholder="Repeticiones (opcional)">
-            </td>
-        `;
+    newRow.innerHTML = `
+        <td>
+            <select name="form-${exerciseCount}-exercise" class="form-control" required>
+                <option value="">Selecciona un ejercicio</option>
+                {% for exercise in exercises %}
+                    <option value="{{ exercise.id }}">{{ exercise.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="number" name="form-${exerciseCount}-duration" class="form-control" min="1" max="60" required>
+        </td>
+        <td>
+            <input type="number" name="form-${exerciseCount}-repetitions" class="form-control" min="0">
+        </td>
+    `;
 
-        tableBody.appendChild(newRow);
-        exerciseCount++;
-    });
-
+    tableBody.appendChild(newRow);
+    exerciseCount++;
+});
 </script>
 {% endblock %}
