@@ -4,12 +4,14 @@
     <h1 class="text-center mb-4">Detalles de la Rutina</h1>
 
     <div class="container">
-        <!-- Información de la rutina -->
+        <!-- Informació de la rutina -->
         <div class="mb-4">
             <h3>Rutina de {{ routine.trainer.username }}</h3>
-            <p><strong>Hora de inicio:</strong> {{ routine.start_time|date:"H:i" }}</p>
+            {% if start_date %}
+                <p><strong>Hora de inicio:</strong> {{ routine.start_time|date:"H:i" }}</p> <!-- Si esta asignada al calendario (falta por hacer) -->
+            {% endif %}
             <p><strong>Dificultad:</strong> {{ routine.get_dificulty_display }}</p>
-            <p><strong>Duración total:</strong> {{ total_duration }} minutos</p>
+            <p><strong>Duración total:</strong> {{ routine.total_duration }} minutos</p>
         </div>
 
         <h4>Ejercicios</h4>
@@ -28,7 +30,7 @@
 
         <!-- Botón de vuelta -->
         <div class="mt-4 text-center">
-            <a href="{% url 'trainer_dashboard' %}" class="btn btn-secondary">Volver al Dashboard</a>
+            <a href="{% url 'view_routines' %}" class="btn btn-secondary">Tornar a les rutines</a>
         </div>
     </div>
 {% endblock %}

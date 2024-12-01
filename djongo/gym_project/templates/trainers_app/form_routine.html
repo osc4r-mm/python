@@ -4,47 +4,113 @@
 <div class="container mt-5">
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
-            <h2 class="mb-0">Crear Rutina</h2>
+            <h2 class="mb-0">
+                {% if edit_mode %}
+                    Editar Rutina
+                {% else %}
+                    Crear Rutina
+                {% endif %}
+            </h2>
         </div>
         <div class="card-body">
             <form method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
+                {% if edit_mode %}
+                    <div class="mb-4">
+                        <label for="trainer" class="form-label">Entrenador</label>
+                        <select name="trainer" class="form-control" required>
+                            <option value="">Selecciona un entrenador</option>
+                            {% for trainer in trainers %}
+                                <option value="{{ trainer.id }}">{{ trainer.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
                 <div class="mb-4">
-                    <label for="start_time" class="form-label">Hora de inicio</label>
-                    {{ form.start_time }}
+                    <label for="dificulty" class="form-label">Dificultat</label>
+                    {{ form.dificulty }}
                 </div>
 
                 <h3 class="mt-4">Selecciona los ejercicios:</h3>
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="exercise-table">
                     <thead>
                         <tr>
-                            <th>Seleccionar</th>
                             <th>Ejercicio</th>
                             <th>Duración (minutos)</th>
+                            <th>Repeticiones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for exercise in exercises %}
                         <tr>
                             <td>
-                                <input type="checkbox" name="exercises" value="{{ exercise.id }}" id="exercise_{{ exercise.id }}">
+                                <select name="exercise_0" class="form-control" required>
+                                    <option value="">Selecciona un ejercicio</option>
+                                    {% for exercise in exercises %}
+                                        <option value="{{ exercise.id }}">{{ exercise.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </td>
                             <td>
-                                <label for="exercise_{{ exercise.id }}">{{ exercise.name }}</label>
+                                <input type="number" name="duration_0" class="form-control" min="1" max="60" placeholder="Duración en minutos" required>
                             </td>
                             <td>
-                                <input type="number" name="duration_{{ exercise.id }}" class="form-control" min="1" max="60" placeholder="Duración en minutos">
+                                <input type="number" name="repetitions_0" class="form-control" min="0" placeholder="Repeticiones (opcional)">
                             </td>
                         </tr>
-                        {% endfor %}
                     </tbody>
                 </table>
 
-                <div class="text-end">
-                    <button type="submit" class="btn btn-success">Crear Rutina</button>
+                <button type="button" class="btn btn-secondary" id="add-exercise">Añadir Ejercicio</button>
+
+                <div class="text-end mt-3">
+                    <button type="submit" class="btn btn-success">
+                        {% if edit_mode %}
+                            Editar Rutina
+                        {% else %}
+                            Crear Rutina
+                        {% endif %}    
+                    </button>
                 </div>
             </form>
+            {% if edit_mode %}
+            <div class="text-center mt-3">
+                <form method="POST" action="{% url 'delete_routine' routine.id %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta rutina?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg">Eliminar</button>
+                </form>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+<script>
+    let exerciseCount = 1;
+
+    document.getElementById('add-exercise').addEventListener('click', function() {
+        const tableBody = document.querySelector('#exercise-table tbody');
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+            <td>
+                <select name="exercise_${exerciseCount}" class="form-control" required>
+                    <option value="">Selecciona un ejercicio</option>
+                    {% for exercise in exercises %}
+                        <option value="{{ exercise.id }}">{{ exercise.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input type="number" name="duration_${exerciseCount}" class="form-control" min="1" max="60" placeholder="Duración en minutos" required>
+            </td>
+            <td>
+                <input type="number" name="repetitions_${exerciseCount}" class="form-control" min="0" placeholder="Repeticiones (opcional)">
+            </td>
+        `;
+
+        tableBody.appendChild(newRow);
+        exerciseCount++;
+    });
+
+</script>
 {% endblock %}

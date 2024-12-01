@@ -41,23 +41,12 @@ class Exercise(models.Model):
 
 # Definim el model de la rutina
 class Routine(models.Model):
-    DIFFICULTY_CHOICES = [
-        ('Principiante', 'Principiante'),
-        ('Intermedio', 'Intermedio'),
-        ('Experto', 'Experto'),
-    ]
-    
     trainer = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
         limit_choices_to={'role': 'trainer'}
     )
-    start_time = models.TimeField()
-    dificulty = models.CharField(
-        max_length=50, 
-        choices=DIFFICULTY_CHOICES,
-        default='easy'
-    )
+    dificulty = models.CharField(max_length=50)
     exercises = models.ManyToManyField(
         Exercise, 
         through='RoutineExercise'

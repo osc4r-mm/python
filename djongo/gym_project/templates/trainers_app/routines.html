@@ -16,12 +16,18 @@
                             <h5 class="card-title mb-0">Rutina de {{ routine.trainer.username }}</h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>Dificultad:</strong> {{ routine.get_dificulty_display }}</p>
-                            <p><strong>Hora de inicio:</strong> {{ routine.start_time|date:"H:i" }}</p>
+                            <p><strong>Dificultad:</strong> {{ routine.dificulty }}</p>
                             <p><strong>Duración total:</strong> {{ routine.total_duration }} minutos</p>
-                        </div>
-                        <div class="card-footer">
-                            <a href="{% url 'view_routine' routine.id %}" class="btn btn-primary btn-block">Ver Detalles</a>
+                            <div class="d-flex justify-content-left" style="gap: 5px;">
+                                <a href="{% url 'view_routine' routine.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+    
+                                <a href="{% url 'edit_routine' routine.id %}" class="btn btn-warning btn-sm">Editar</a>
+    
+                                <form method="POST" action="{% url 'delete_routine' routine.id %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este ejercicio?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

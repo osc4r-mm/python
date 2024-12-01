@@ -34,14 +34,13 @@ def view_routines(request):
 def view_routine(request, routine_id):
     routine = get_object_or_404(Routine, id=routine_id)
     
-    routine_exercises = routine.routineexercise_set.all()
-    
-    total_duration = sum(r_ex.duration for r_ex in routine_exercises)
+    total_duration = 0
+    for routine_exercise in routine.routineexercise_set.all():
+        total_duration += routine_exercise.duration
+    routine.total_duration = total_duration
     
     context = {
         'routine': routine,
-        'routine_exercises': routine_exercises,
-        'total_duration': total_duration
     }
     
     return render(request, 'trainers_app/routine.html', context)
@@ -57,21 +56,45 @@ def create_routine(request):
             routine.save()
 
             # Guardar los ejercicios con sus duraciones
-            selected_exercises = request.POST.getlist('exercises')
-            for exercise_id in selected_exercises:
-                duration = request.POST.get(f'duration_{exercise_id}')
-                if exercise_id and duration:
-                    try:
-                        duration = int(duration)  # Convertir a entero
-                        if duration < 60:
-                            RoutineExercise.objects.create(
+            exercise_count = 0
+            valid = True
+
+            while True:
+                exercise_id = request.POST.get(f'exercise_{exercise_count}')
+                duration = request.POST.get(f'duration_{exercise_count}')
+                
+                if not exercise_id:  # Si no hay más ejercicios, salir del bucle
+                    break
+                
+                if not exercise_id or not duration:  # Validar que haya ejercicio y duración
+                    messages.add_message(request, messages.ERROR, 'Todos los ejercicios deben tener un ejercicio y una duración asignados.', extra_tags='danger')
+                    valid = False
+                    break
+
+                try:
+                    duration = int(duration)  # Convertir a entero
+                    if 1 <= duration <= 60:  # Validar que la duración esté en el rango correcto
+                        RoutineExercise.objects.create(
                             routine=routine,
                             exercise_id=exercise_id,
-                            duration=int(duration)
+                            duration=duration
                         )
-                    except ValueError:
-                        messages.add_message(request, messages.ERROR, 'Duración inválida para el ejercicio.', extra_tags='danger')
+                    else:
+                        messages.add_message(request, messages.ERROR, 'La duración debe estar entre 1 y 60 minutos.', extra_tags='danger')
+                        valid = False
                         return redirect("create_routine")
+                except ValueError:
+                    messages.add_message(request, messages.ERROR, 'Duración inválida para el ejercicio.', extra_tags='danger')
+                    valid = False
+                    return redirect("create_routine")
+                
+                exercise_count += 1
+
+                if valid:
+                    messages.success(request, 'Rutina creada correctamente.')
+                    return redirect('view_routines')
+                else:
+                    return redirect("create_routine")
             
             messages.success(request, 'Rutina creada correctamente.')
             return redirect('view_routines')
@@ -84,37 +107,50 @@ def create_routine(request):
     if not exercises:
         messages.warning(request, 'No hay ejercicios disponibles para seleccionar.')
     
-    duration_range = range(1, 61)
-
     context = {
         'form': form,
         'exercises': exercises,
-        'duration_range': duration_range
     }
     return render(request, 'trainers_app/form_routine.html', context)
 
 @login_required
 @role_required('trainer')
-def edit_exercise(request, exercise_id):
-    exercise = get_object_or_404(Exercise, pk=exercise_id)
+def edit_routine(request, routine_id):
+    routine = get_object_or_404(Exercise, pk=routine_id)
+    exercises = Exercise.objects.all()
+    trainers = User.objects.filter(role='trainer') 
 
     if request.method == 'POST':
-        form = ExerciseForm(request.POST, instance=exercise)
+        form = RoutineForm(request.POST, instance=routine)
         if form.is_valid():
+            routine.trainer = request.POST.get('trainer')
             form.save()
-            messages.success(request, f'El ejercicio {exercise.name} ha sido eliminado exitosamente.')
-            return redirect('view_exercises')
+
+            RoutineExercise.objects.filter(routine=routine).delete()
+
+            for exercise_id in request.POST.getlist('exercises'):
+                duration = request.POST.get(f'duration_{exercise_id}')
+                if duration:
+                    RoutineExercise.objects.create(
+                        routine=routine,
+                        exercise_id=exercise_id,
+                        duration=duration
+                    )
+            messages.success(request, f"La rutina s'ha editat correctament.")
+            return redirect('view_routines')
         else:
-            messages.add_message(request, messages.ERROR, 'No se pudo editar el ejercicio', extra_tags='danger')
+            messages.add_message(request, messages.ERROR, 'No es pot editar la rutina', extra_tags='danger')
     else:
-        form = ExerciseForm(instance=exercise)
+        form = ExerciseForm(instance=routine)
 
     context = {
         'form': form,
-        'exercise': exercise,
+        'routine': routine,
+        'exercises': exercises,
+        'trainers': trainers,
         'edit_mode': True
     }
-    return render(request, 'trainers_app/form_exercise.html', context)
+    return render(request, 'trainers_app/form_routine.html', context)
 
 @login_required
 @role_required('trainer')
@@ -127,7 +163,7 @@ def delete_routine(request, routine_id):
     else:
         messages.add_message(request, messages.ERROR, 'No es pot eliminar la rutina.', extra_tags='danger')
     
-    return redirect('view_exercises')
+    return redirect('view_routines')
 
 # Exercises
 @login_required

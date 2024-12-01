@@ -2,29 +2,23 @@ from django import forms
 from gym_app.models import *
 
 class RoutineForm(forms.ModelForm):
-    TIME_CHOICES = [
-        ('16:00', '16:00'),
-        ('17:00', '17:00'),
-        ('18:00', '18:00'),
-        ('19:00', '19:00'),
-        ('20:00', '20:00'),
-        ('21:00', '21:00'),
+    DIFFICULTY_CHOICES = [
+        ('Principiant', 'Principiant'),
+        ('Intermig', 'Intermig'),
+        ('Expert', 'Expert'),
     ]
-    start_time = forms.ChoiceField(choices=TIME_CHOICES, required=True)
+
+    dificulty = forms.ChoiceField(choices=DIFFICULTY_CHOICES, required=True)
 
     class Meta:
         model = Routine
-        fields = ['start_time']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        return cleaned_data
+        fields = ['dificulty']
 
 # Formulario intermedio para agregar la duración de cada ejercicio en la rutina
 class RoutineExerciseForm(forms.ModelForm):
     class Meta:
         model = RoutineExercise
-        fields = ['exercise', 'duration']
+        fields = ['exercise', 'duration', 'repetitions']
 
 class ExerciseForm(forms.ModelForm):
     class Meta:
