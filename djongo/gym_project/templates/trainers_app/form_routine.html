@@ -18,7 +18,7 @@
                 {{ formset.management_form }}
                 <!-- Formulario de rutina -->
                 <div class="mb-4">
-                    <label for="id_name" class="form-label">Nombre de la rutina</label>
+                    <label for="id_name" class="form-label">Nom de la rutina</label>
                     {{ routine_form.name }}
                 </div>
                 {% if edit_mode %}
@@ -28,18 +28,18 @@
                     </div>
                 {% endif %}
                 <div class="mb-4">
-                    <label for="id_difficulty" class="form-label">Dificultad</label>
+                    <label for="id_difficulty" class="form-label">Dificultat</label>
                     {{ routine_form.difficulty }}
                 </div>
 
                 <!-- Ejercicios en la rutina -->
-                <h3 class="mt-4">Selecciona los ejercicios:</h3>
+                <h3 class="mt-4">Selecciona els exercicis:</h3>
                 <table class="table table-bordered" id="exercise-table">
                     <thead>
                         <tr>
-                            <th>Ejercicio</th>
-                            <th>Duración (minutos)</th>
-                            <th>Repeticiones</th>
+                            <th>Ejercici</th>
+                            <th>Duració (minuts)</th>
+                            <th>Repeticions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,7 +59,7 @@
                     </tbody>
                 </table>
 
-                <button type="button" class="btn btn-secondary" id="add-exercise">Añadir Ejercicio</button>
+                <button type="button" class="btn btn-secondary" id="add-exercise">Afegir Exercici</button>
 
                 <div class="text-end mt-3">
                     <button type="submit" class="btn btn-success">
@@ -74,7 +74,7 @@
 
             {% if edit_mode %}
             <div class="text-center mt-3">
-                <form method="POST" action="{% url 'delete_routine' routine.id %}" onsubmit="return confirm('¿Estás segur de eliminar aquesta rutina?');">
+                <form method="POST" action="{% url 'delete_routine' routine.id %}" onsubmit="return confirm('¿Estás segur d\'eliminar aquesta rutina?');">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-lg">Eliminar</button>
                 </form>
@@ -94,7 +94,7 @@ document.getElementById('add-exercise').addEventListener('click', function() {
     newRow.innerHTML = `
         <td>
             <select name="form-${exerciseCount}-exercise" class="form-control" required>
-                <option value="">Selecciona un ejercicio</option>
+                <option value="">Selecciona un exerici</option>
                 {% for exercise in exercises %}
                     <option value="{{ exercise.id }}">{{ exercise.name }}</option>
                 {% endfor %}

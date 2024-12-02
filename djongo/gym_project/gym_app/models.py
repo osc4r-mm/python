@@ -13,18 +13,21 @@ class User(AbstractUser):
 
     email = models.EmailField(
         unique=True,
-        max_length=30
+        max_length=50,
+    )
+    username = models.CharField(
+        max_length=30,
     )
     first_name = models.CharField(
-        max_length=30
+        max_length=30,
     )
     last_name = models.CharField(
-        max_length=30
+        max_length=30,
     )
     role = models.CharField(
         max_length=10,
         choices=ROLE_CHOICES, 
-        default='user'
+        default='user',
     )
 
     class Meta:
@@ -48,15 +51,15 @@ class Exercise(models.Model):
 
     name = models.CharField(
         max_length=30,
-        unique=True
+        unique=True,
     )
     description = models.TextField(
-        max_length=255
+        max_length=255,
     )
     category = models.CharField(
         max_length=50, 
         choices=CATEGORY_CHOICES,
-        default='Força'
+        default='Força',
     )
 
     def __str__(self):
@@ -73,22 +76,24 @@ class Routine(models.Model):
     trainer = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
-        limit_choices_to={'role': 'trainer'}
+        limit_choices_to={'role': 'trainer'},
+        null=True,
+        blank=True,
     )
     name = models.CharField(
         max_length=30,
-        unique=True
+        unique=True,
     )
     difficulty = models.CharField(
         max_length=50,
-        choices=DIFFICULTY_CHOICES
+        choices=DIFFICULTY_CHOICES,
     )
     exercises = models.ManyToManyField(
         Exercise, 
-        through='RoutineExercise'
+        through='RoutineExercise',
     )
 
-    def total_duration(self):
+    def get_total_duration(self):
         return sum(
             exercise.duration for exercise in self.routineexercise_set.all()
         )
@@ -100,19 +105,19 @@ class Routine(models.Model):
 class RoutineExercise(models.Model):
     routine = models.ForeignKey(
         Routine, 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     exercise = models.ForeignKey(
         Exercise, 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     repetitions = models.PositiveIntegerField(
         blank=True, 
-        null=True
+        null=True,
     )
     duration = models.PositiveIntegerField(
         blank=False, 
-        null=False
+        null=False,
     )
 
     def clean(self):
@@ -120,4 +125,4 @@ class RoutineExercise(models.Model):
             raise ValidationError("La duración debe ser un valor positivo.")
     
     def __str__(self):
-        return f"{self.exercise.name} - {self.repetitions or 'N/A'} reps - {self.duration} minutos"
+        return f"{self.exercise.name} - {self.repetitions or '--'} reps - {self.duration} minutos"
