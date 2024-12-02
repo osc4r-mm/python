@@ -6,9 +6,9 @@
         <div class="card-header bg-primary text-white text-center">
             <h4 class="mb-0">
                 {% if edit_mode %}
-                    Editar Ejercicio: {{ exercise.name }}
+                    Editar Exercici: {{ exercise.name }}
                 {% else %}
-                    Crear Nuevo Ejercicio
+                    Crear Nou Exercici
                 {% endif %}
             </h4>
         </div>
@@ -16,11 +16,11 @@
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group mb-3">
-                    <label for="id_name">Nombre del ejercicio</label>
+                    <label for="id_name">Nom de l'exercici</label>
                     {{ form.name }}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="id_description">Descripción</label>
+                    <label for="id_description">Descripció</label>
                     {{ form.description }}
                 </div>
                 <div class="form-group mb-3">
@@ -40,7 +40,7 @@
             </form>
             {% if edit_mode %}
             <div class="text-center mt-3">
-                <form method="POST" action="{% url 'delete_exercise' exercise.id %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este ejercicio?');">
+                <form method="POST" action="{% url 'delete_exercise' exercise.id %}" onsubmit="return confirm('¿Estás segur de que vols eliminar aquest exercici?');">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-lg">Eliminar</button>
                 </form>

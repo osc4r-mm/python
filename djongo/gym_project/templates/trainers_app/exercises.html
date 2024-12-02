@@ -1,10 +1,10 @@
 {% extends 'trainers_app/base.html' %}
 
 {% block content %}
-    <h1 class="text-center mb-4">Lista de Ejercicios</h1>
+    <h1 class="text-center mb-4">Llista d'Exercici</h1>
 
     <div class="text-center mb-4">
-        <a href="{% url 'create_exercise' %}" class="btn btn-primary btn-lg">Añadir Ejercicio</a>
+        <a href="{% url 'create_exercise' %}" class="btn btn-primary btn-lg">Afegir Exercici</a>
     </div>
 
     <div class="container">
@@ -18,9 +18,9 @@
                             </div>
                             <div class="card-body">
                                 <p><strong>Categoría:</strong> {{ exercise.category }}</p>
-                                <p><strong>Descripción:</strong> {{ exercise.description|slice:":20" }}{% if exercise.description|length > 20 %}...{% endif %}</p>
+                                <p><strong>Descripció:</strong> {{ exercise.description|slice:":20" }}{% if exercise.description|length > 20 %}...{% endif %}</p>
                                 <div class="d-flex justify-content-left" style="gap: 5px;">
-                                    <a href="{% url 'view_exercise' exercise.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                                    <a href="{% url 'view_exercise' exercise.id %}" class="btn btn-primary btn-sm">Ver Detalls</a>
 
                                     <a href="{% url 'edit_exercise' exercise.id %}" class="btn btn-warning btn-sm">Editar</a>
 
@@ -35,7 +35,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <p class="text-center text-muted">No hay ejercicios disponibles.</p>
+            <p class="text-center text-muted">No hi ha exercicis disponibles</p>
         {% endif %}
     </div>
 {% endblock %}

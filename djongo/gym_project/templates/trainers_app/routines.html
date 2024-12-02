@@ -13,11 +13,12 @@
                 <div class="col">
                     <div class="card border-primary h-100">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="card-title mb-0">Rutina de {{ routine.trainer.username }}</h5>
+                            <h5 class="card-title mb-0">{{ routine.name }}</h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>Dificultad:</strong> {{ routine.dificulty }}</p>
+                            <p><strong>Dificultad:</strong> {{ routine.difficulty }}</p>
                             <p><strong>Duración total:</strong> {{ routine.total_duration }} minutos</p>
+                            <p><strong>Entrenador:</strong> {{ routine.trainer.first_name }} {{ routine.trainer.last_name }}</p>
                             <div class="d-flex justify-content-left" style="gap: 5px;">
                                 <a href="{% url 'view_routine' routine.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
     

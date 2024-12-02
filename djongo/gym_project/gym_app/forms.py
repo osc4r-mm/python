@@ -8,6 +8,14 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User 
         fields = ['email', 'username', 'first_name', 'last_name', 'role', 'password1', 'password2']
+    
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        return first_name.capitalize()
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        return last_name.capitalize()
 
 # Formulari per a l'inici de sessió
 class UserLoginForm(forms.Form):
@@ -19,6 +27,13 @@ class EditProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
-
     
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        return first_name.capitalize()
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        return last_name.capitalize()
+
     password = forms.CharField(widget=forms.PasswordInput(), required=False, label="Nueva contrasenya")
