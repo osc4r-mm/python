@@ -12,24 +12,24 @@
                     <!-- Formulari de login -->
                     <form method="post" class="text-center">
                         {% csrf_token %}
-                        {% for field in form %}
+                        {% for field in form %} <!-- Iteració sobre cada camp del formulari -->
                             <div class="mb-3">
                                 <!-- Etiqueta del camp -->
-                                <label for="{{ field.id_for_label }}" class="form-label d-block">
+                                <label for="{{ field.id_for_label }}" class="form-label">
                                     {{ field.label }}
                                 </label><br>
-                                <!-- Errors de validació -->
-                                <div class="text-danger small">{{ field.errors }}</div>
                                 <!-- Camp del formulari -->
                                 <div class="d-flex justify-content-center">{{ field }}</div>
+                                <!-- Errors -->
+                                <div class="text-danger small">{{ field.errors }}</div>
                             </div>
                         {% endfor %}
                         <!-- Botó per enviar el formulari -->
-                        <div class="d-grid mt-4">
+                        <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Iniciar Sessió</button>
                         </div>
                     </form>
-                    <!-- Enllaç per als usuaris sense compte -->
+                    <!-- Enllaç per registrar-se -->
                     <div class="text-center mt-3">
                         <p>No tens compte? <a href="{% url 'register' %}">Registra't</a></p>
                     </div>
