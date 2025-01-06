@@ -40,6 +40,7 @@
                             <th>Ejercici</th>
                             <th>Duració (minuts)</th>
                             <th>Repeticions</th>
+                            <th>Eliminar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,9 @@
                                 </td>
                                 <td>
                                     {{ form_ex.repetitions }}
+                                </td>
+                                <td>
+                                    {{ form_ex.DELETE }}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -85,31 +89,32 @@
 </div>
 
 <script>
-let exerciseCount = {{ formset.total_form_count }};
+document.addEventListener('DOMContentLoaded', function () {
+    // Inicializar el contador de formularios con el valor de TOTAL_FORMS
+    let totalForms = parseInt(document.querySelector('input[name="form-TOTAL_FORMS"]').value);
 
-document.getElementById('add-exercise').addEventListener('click', function() {
-    const tableBody = document.querySelector('#exercise-table tbody');
-    const newRow = document.createElement('tr');
+    document.getElementById('add-exercise').addEventListener('click', function() {
+        const tableBody = document.querySelector('#exercise-table tbody');
+        const formTemplate = document.querySelector('#exercise-table tbody tr:first-child').cloneNode(true);
 
-    newRow.innerHTML = `
-        <td>
-            <select name="form-${exerciseCount}-exercise" class="form-control" required>
-                <option value="">Selecciona un exerici</option>
-                {% for exercise in exercises %}
-                    <option value="{{ exercise.id }}">{{ exercise.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <input type="number" name="form-${exerciseCount}-duration" class="form-control" min="1" max="60" required>
-        </td>
-        <td>
-            <input type="number" name="form-${exerciseCount}-repetitions" class="form-control" min="0">
-        </td>
-    `;
+        // Netejar valors
+        formTemplate.querySelectorAll('input, select').forEach(field => {
+            if (field.tagName === 'SELECT') {
+                field.selectedIndex = 0;
+            } else {
+                field.value = '';
+            }
 
-    tableBody.appendChild(newRow);
-    exerciseCount++;
+            // Actualitzar nombres amb el nou índex
+            field.name = field.name.replace(/form-(\d+)-/, `form-${totalForms}-`);
+            field.id = field.id.replace(/form-(\d+)-/, `form-${totalForms}-`);
+        });
+
+        tableBody.appendChild(formTemplate);
+
+        // Actualizar el TOTAL_FORMS
+        document.querySelector('input[name="form-TOTAL_FORMS"]').value = ++totalForms;
+    });
 });
 </script>
 {% endblock %}

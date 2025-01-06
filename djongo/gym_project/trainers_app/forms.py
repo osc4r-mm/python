@@ -1,5 +1,4 @@
 from django import forms
-from django.forms import modelformset_factory
 from gym_app.models import *
 
 # Formulari per afegir rutina
@@ -29,12 +28,12 @@ class RoutineExerciseForm(forms.ModelForm):
         if duration <= 0:
             raise forms.ValidationError("La duració ha de ser un valor positiu.")
         return duration
-# FormSet
-RoutineExerciseFormSet = modelformset_factory(
-    RoutineExercise, 
-    form=RoutineExerciseForm, 
-    extra=1
-)
+    
+    def clean_repetitions(self):
+        repetitions = self.cleaned_data.get('repetitions')
+        if repetitions is not None and repetitions < 0:
+            raise forms.ValidationError("Les repeticions no poden ser negatives.")
+        return repetitions
 
 # Formulari per afegir l'exercici
 class ExerciseForm(forms.ModelForm):

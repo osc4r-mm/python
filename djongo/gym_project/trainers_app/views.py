@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.forms import modelformset_factory
 from django.contrib import messages
 from gym_app.models import *
 from .models import *
@@ -44,42 +45,33 @@ def view_routine(request, routine_id):
     }
     return render(request, 'trainers_app/routine.html', context)
 
+
+def handle_routine_form(request, routine=None):
+    RoutineExerciseFormSet = modelformset_factory(
+        RoutineExercise,
+        form=RoutineExerciseForm,
+        extra=1,
+        can_delete=True
+    )
+    if routine:
+        queryset = RoutineExercise.objects.filter(routine=routine)
+    else:
+        queryset = RoutineExercise.objects.none()
+
+    routine_form = RoutineForm(request.POST or None, instance=routine)
+    formset = RoutineExerciseFormSet(request.POST or None, queryset=queryset)
+    return routine_form, formset
+
+
 @login_required
 @role_required('trainer')
-def create_edit_routine(request, routine_id=None):
-    if routine_id:
-        routine = get_object_or_404(Routine, id=routine_id)
-        routine_form = RoutineForm(instance=routine)
-        RoutineExerciseFormSet = modelformset_factory(
-            RoutineExercise,
-            form=RoutineExerciseForm,
-            extra=1,
-            can_delete=True
-        )
-    else:
-        routine = None
-        routine_form = RoutineForm()
-        RoutineExerciseFormSet = modelformset_factory(
-            RoutineExercise,
-            form=RoutineExerciseForm,
-            extra=1
-        )
-
+def create_routine(request):
+    routine_form, formset = handle_routine_form(request)
     if request.method == 'POST':
-        if routine_id:
-            routine_form = RoutineForm(request.POST, instance=routine)
-            formset = RoutineExerciseFormSet(request.POST, queryset=RoutineExercise.objects.filter(routine=routine))
-        else:
-            routine_form = RoutineForm(request.POST)
-            formset = RoutineExerciseFormSet(request.POST, queryset=RoutineExercise.objects.none())
-
         if routine_form.is_valid() and formset.is_valid():
-            if routine_id:
-                routine_form.save()  # Guardar la rutina sin cambiar el entrenador
-            else:
-                routine = routine_form.save(commit=False)
-                routine.trainer = request.user  # Asignar el entrenador automáticamente
-                routine.save()
+            routine = routine_form.save(commit=False)
+            routine.trainer = request.user
+            routine.save()
 
             for form in formset:
                 if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
@@ -87,52 +79,10 @@ def create_edit_routine(request, routine_id=None):
                     routine_exercise.routine = routine
                     routine_exercise.save()
 
-            messages.success(request, 'Rutina guardada correctamente.')
-            return redirect('view_routines')
-        else:
-            messages.error(request, 'Error al guardar la rutina.')
-
-    else:
-        if routine_id:
-            formset = RoutineExerciseFormSet(queryset=RoutineExercise.objects.filter(routine=routine))
-        else:
-            formset = RoutineExerciseFormSet(queryset=RoutineExercise.objects.none())
-
-    context = {
-        'routine_form': routine_form,
-        'formset': formset,
-        'edit_mode': routine_id is not None,
-    }
-    return render(request, 'trainers_app/form_routine.html', context)
-
-@login_required
-@role_required('trainer')
-def create_routine(request):
-    if request.method == 'POST':
-        routine_form = RoutineForm(request.POST)
-        formset = RoutineExerciseFormSet(request.POST, queryset=RoutineExercise.objects.none())
-
-        if routine_form.is_valid() and formset.is_valid():
-            routine = routine_form.save(commit=False)
-            routine.trainer = request.user  # Asignar el entrenador automáticamente
-            routine.save()
-
-            for form in formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                    RoutineExercise.objects.create(
-                        routine=routine,
-                        exercise=form.cleaned_data['exercise'],
-                        duration=form.cleaned_data['duration'],
-                        repetitions=form.cleaned_data['repetitions']
-                    )
-
-            messages.success(request, 'Rutina creada correctamente.')
-            return redirect('view_routines')
+                messages.success(request, 'Rutina creada correctament.')
+                return redirect('view_routines')
         else:
             messages.error(request, 'Error al crear la rutina.')
-    else:
-        routine_form = RoutineForm()
-        formset = RoutineExerciseFormSet(queryset=RoutineExercise.objects.none())
 
     context = {
         'routine_form': routine_form,
@@ -145,22 +95,16 @@ def create_routine(request):
 @role_required('trainer')
 def edit_routine(request, routine_id):
     routine = get_object_or_404(Routine, id=routine_id)
-    RoutineExerciseFormSet = modelformset_factory(
-        RoutineExercise,
-        form=RoutineExerciseForm,
-        extra=1,
-        can_delete=True
-    )
+    routine_form, formset = handle_routine_form(request, routine)
 
     if request.method == 'POST':
-        routine_form = RoutineForm(request.POST, instance=routine)
-        formset = RoutineExerciseFormSet(request.POST, queryset=RoutineExercise.objects.filter(routine=routine))
-
         if routine_form.is_valid() and formset.is_valid():
             routine_form.save()
 
             for form in formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                if form.cleaned_data.get('DELETE'):
+                    form.instance.delete()
+                elif form.cleaned_data:
                     routine_exercise = form.save(commit=False)
                     routine_exercise.routine = routine
                     routine_exercise.save()
@@ -169,17 +113,18 @@ def edit_routine(request, routine_id):
             return redirect('view_routines')
         else:
             messages.add_message(request, messages.ERROR, 'Error a l\'editar la rutina.', extra_tags='danger')
-    else:
-        routine_form = RoutineForm(instance=routine)
-        formset = RoutineExerciseFormSet(queryset=RoutineExercise.objects.filter(routine=routine))
 
     exercises = Exercise.objects.all()
+    routine_exercises = routine.routineexercise_set.all()
 
     context = {
+        'routine': routine,
         'routine_form': routine_form,
         'formset': formset,
         'exercises': exercises,
-        'edit_mode': True }  
+        'routine_exercises': routine_exercises,
+        'edit_mode': True
+    }  
     return render(request, 'trainers_app/form_routine.html', context)  
 
 @login_required
@@ -205,16 +150,6 @@ def view_exercises(request):
         'exercises': exercises
     }
     return render(request, 'trainers_app/exercises.html', context)
-
-@login_required
-@role_required('trainer')
-def view_exercise(request, exercise_id):
-    exercise = get_object_or_404(Exercise, pk=exercise_id)
-    
-    context = {
-        'exercise': exercise
-    }
-    return render(request, 'trainers_app/exercise.html', context)
 
 @login_required
 @role_required('trainer')

@@ -101,7 +101,7 @@ class Routine(models.Model):
         )
 
     def __str__(self):
-        return f"Rutina de {self.trainer} a las {self.start_time.strftime('%H:%M')}"
+        return f"{self.name} - {self.trainer.first_name} {self.trainer.last_name}"
 
 
 class RoutineExercise(models.Model):
@@ -124,7 +124,7 @@ class RoutineExercise(models.Model):
 
     def clean(self):
         if self.duration is None or self.duration <= 0:
-            raise ValidationError("La duración debe ser un valor positivo.")
+            raise ValidationError("La duració ha de ser un valor positiu.")
     
     def __str__(self):
-        return f"{self.exercise.name} - {self.repetitions or '--'} reps - {self.duration} minutos"
+        return f"{self.exercise.name} - {self.repetitions or '--'} reps - {self.duration} minuts"

@@ -69,9 +69,9 @@ class EditProfileForm(forms.ModelForm):
     
     def clean_password(self):
         password = self.cleaned_data.get('password')
-        if password:  # Si se proporciona una nueva contraseña
+        if password:
             try:
-                validate_password(password, self.instance)  # Valida usando las reglas de Django
+                validate_password(password, self.instance)
             except ValidationError as e:
                 raise ValidationError(e.messages)
         return password

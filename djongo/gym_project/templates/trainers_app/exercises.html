@@ -19,9 +19,7 @@
                             <div class="card-body">
                                 <p><strong>Categoría:</strong> {{ exercise.category }}</p>
                                 <p><strong>Descripció:</strong> {{ exercise.description|slice:":20" }}{% if exercise.description|length > 20 %}...{% endif %}</p>
-                                <div class="d-flex justify-content-left" style="gap: 5px;">
-                                    <a href="{% url 'view_exercise' exercise.id %}" class="btn btn-primary btn-sm">Ver Detalls</a>
-
+                                <div class="d-flex" style="gap: 5px;">
                                     <a href="{% url 'edit_exercise' exercise.id %}" class="btn btn-warning btn-sm">Editar</a>
 
                                     <form method="POST" action="{% url 'delete_exercise' exercise.id %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este ejercicio?');">
