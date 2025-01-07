@@ -47,27 +47,32 @@ def view_routine(request, routine_id):
 
 
 def handle_routine_form(request, routine=None):
+    is_editing = routine is not None
+    
     RoutineExerciseFormSet = modelformset_factory(
         RoutineExercise,
         form=RoutineExerciseForm,
-        extra=1,
+        extra=0 if is_editing else 1,
+        min_num=1,
         can_delete=True
     )
-    if routine:
-        queryset = RoutineExercise.objects.filter(routine=routine)
-    else:
-        queryset = RoutineExercise.objects.none()
-
+    
+    queryset = RoutineExercise.objects.filter(routine=routine) if routine else RoutineExercise.objects.none()
     routine_form = RoutineForm(request.POST or None, instance=routine)
     formset = RoutineExerciseFormSet(request.POST or None, queryset=queryset)
+        
     return routine_form, formset
 
+import pprint
 
 @login_required
 @role_required('trainer')
 def create_routine(request):
     routine_form, formset = handle_routine_form(request)
+
     if request.method == 'POST':
+
+
         if routine_form.is_valid() and formset.is_valid():
             routine = routine_form.save(commit=False)
             routine.trainer = request.user
@@ -82,7 +87,7 @@ def create_routine(request):
                 messages.success(request, 'Rutina creada correctament.')
                 return redirect('view_routines')
         else:
-            messages.error(request, 'Error al crear la rutina.')
+            messages.add_message(request, messages.ERROR, 'Error al crear la rutina.', extra_tags='danger')
 
     context = {
         'routine_form': routine_form,
@@ -99,33 +104,38 @@ def edit_routine(request, routine_id):
 
     if request.method == 'POST':
         if routine_form.is_valid() and formset.is_valid():
-            routine_form.save()
 
-            for form in formset:
-                if form.cleaned_data.get('DELETE'):
-                    form.instance.delete()
-                elif form.cleaned_data:
-                    routine_exercise = form.save(commit=False)
-                    routine_exercise.routine = routine
-                    routine_exercise.save()
+            total_duration = sum(
+            form.cleaned_data.get('duration', 0) 
+            for form in formset 
+            if form.cleaned_data and not form.cleaned_data.get('DELETE', False)
+        )
 
-            messages.success(request, 'Rutina editada correctament')
-            return redirect('view_routines')
+            if total_duration < 60:
+                routine_form.save()
+
+                for form in formset:
+                    if form.cleaned_data.get('DELETE'):
+                        form.instance.delete()
+                    elif form.cleaned_data:
+                        routine_exercise = form.save(commit=False)
+                        routine_exercise.routine = routine
+                        routine_exercise.save()
+
+                messages.success(request, 'Rutina editada correctament')
+                return redirect('view_routines')
+            else:
+                messages.add_message(request, messages.ERROR, 'La rutina no pot durar mes de 60 minuts.', extra_tags='danger')
         else:
             messages.add_message(request, messages.ERROR, 'Error a l\'editar la rutina.', extra_tags='danger')
-
-    exercises = Exercise.objects.all()
-    routine_exercises = routine.routineexercise_set.all()
 
     context = {
         'routine': routine,
         'routine_form': routine_form,
         'formset': formset,
-        'exercises': exercises,
-        'routine_exercises': routine_exercises,
         'edit_mode': True
     }  
-    return render(request, 'trainers_app/form_routine.html', context)  
+    return render(request, 'trainers_app/form_routine.html', context)
 
 @login_required
 @role_required('trainer')
