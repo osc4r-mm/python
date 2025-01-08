@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory
+from datetime import datetime, timedelta
 from django.contrib import messages
 from gym_app.models import *
 from .models import *
@@ -63,16 +64,12 @@ def handle_routine_form(request, routine=None):
         
     return routine_form, formset
 
-import pprint
-
 @login_required
 @role_required('trainer')
 def create_routine(request):
     routine_form, formset = handle_routine_form(request)
 
     if request.method == 'POST':
-
-
         if routine_form.is_valid() and formset.is_valid():
             routine = routine_form.save(commit=False)
             routine.trainer = request.user
@@ -218,7 +215,28 @@ def delete_exercise(request, exercise_id):
     
 @login_required
 def view_schedule(request):
-    return render(request, 'trainers_app/schedule.html')
+    # Obtener la fecha actual
+    today = datetime.now()
+
+    # Generar los días de la semana
+    start_of_week = today - timedelta(days=today.weekday())  # Lunes
+    week_days = [
+        {
+            'name': (start_of_week + timedelta(days=i)).strftime('%A'),  # Nombre del día
+            'date': (start_of_week + timedelta(days=i)).strftime('%d/%m/%Y'),  # Fecha del día
+            'is_today': (start_of_week + timedelta(days=i)).date() == today.date()  # Marcar si es hoy
+        }
+        for i in range(7)
+    ]
+
+    # Generar los horarios de 16:00 a 21:00
+    time_slots = [f"{hour}:00 - {hour + 1}:00" for hour in range(16, 21)]
+
+    context = {
+        'week_days': week_days,
+        'time_slots': time_slots,
+    }
+    return render(request, 'trainers_app/schedule.html', context)
 
 @login_required
 def edit_schedule(request):

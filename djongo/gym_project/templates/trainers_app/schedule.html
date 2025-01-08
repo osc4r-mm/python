@@ -1,5 +1,22 @@
 {% extends 'trainers_app/base.html' %}
 
 {% block content %}
-
+<div class="container mt-5">
+    <h1 class="text-center">{{ current_month_year }}</h1>
+    <div class="calendar d-flex justify-content-between mt-4">
+        {% for day in week_days %}
+        <div class="day {% if day.is_today %}bg-primary text-white{% else %}bg-light{% endif %} rounded p-3 shadow-sm">
+            <h5 class="mb-3">{{ day.name }}</h5>
+            <h6>{{ day.day }}</h6>
+            <div class="time-slots mt-3">
+                {% for hour in time_slots %}
+                <div class="time-slot border rounded p-2 my-1">
+                    {{ hour }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
