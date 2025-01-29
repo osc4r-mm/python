@@ -190,7 +190,7 @@ def edit_exercise(request, exercise_id):
             messages.success(request, f'El ejercicio {exercise.name} ha sido eliminado exitosamente.')
             return redirect('view_exercises')
         else:
-            messages.add_message(request, messages.ERROR, 'No se pudo editar el ejercicio', extra_tags='danger')
+            messages.add_message(request, messages.ERROR, "No es pot editar l'exercici", extra_tags='danger')
     else:
         form = ExerciseForm(instance=exercise)
 
@@ -216,40 +216,41 @@ def delete_exercise(request, exercise_id):
     
 @login_required
 def view_calendar(request):
-    # Obtener la fecha actual
     today = datetime.now()
     start_of_week = today - timedelta(days=today.weekday())  # Lunes
 
-    # Generar días de la semana
+    dies_catala = ["Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte", "Diumenge"]
+
     week_days = [
         {
-            'name': (start_of_week + timedelta(days=i)).strftime('%A'),
+            'name': dies_catala[i],
             'date': (start_of_week + timedelta(days=i)).strftime('%Y-%m-%d'),
             'is_today': (start_of_week + timedelta(days=i)).date() == today.date(),
-            'day_index': i,  # Índice del día (0 para Lunes, 6 para Domingo)
+            'day_index': i, # (0 Dillunss, 6 Diumenge)
         }
         for i in range(7)
     ]
 
-    # Generar los horarios (de 16:00 a 20:00)
-    time_slots = [f"{hour}:00" for hour in range(16, 21)]
+    # Ggnerar caselles de 16:00 a 21:00
+    time_slots = [f"{hour}:00" for hour in range(16, 22)]
 
-    # Obtener todas las rutinas asignadas
+    # obtenir routines asignades al calendari
     assigned_routines = CalendarRoutine.objects.all()
 
-    # Generar `calendar_data` como una lista de listas
-    calendar_data = []
-    for i in range(7):  # Para cada día de la semana
-        day_routines = []
-        for hour in time_slots:
-            routine = assigned_routines.filter(day_of_week=i, time=hour).first()
-            day_routines.append(routine)  # Agregar la rutina o None si no hay
-        calendar_data.append(day_routines)  # Agregar todas las horas del día
+    routines = Routine.objects.all()
+
+    # ficar les rutinas al dia y hora corresponents {día: {hora: rutina}}
+    calendar_data = {i: {} for i in range(7)}
+    for routine in assigned_routines:
+        day = routine.day_of_week
+        time = routine.time.strftime('%H:%M')
+        calendar_data[day][time] = routine
 
     context = {
         'week_days': week_days,
         'time_slots': time_slots,
         'calendar_data': calendar_data,
+        'routines': routines,
     }
     return render(request, 'trainers_app/calendar.html', context)
 
@@ -257,28 +258,32 @@ def view_calendar(request):
 @role_required('trainer')
 def assign_routine_to_calendar(request):
     if request.method == 'POST':
-        form = CalendarRoutineForm(request.POST)
-        if form.is_valid():
-            try:
-                calendar_routine = form.save(commit=False)
-                calendar_routine.trainer = request.user
-                calendar_routine.save()
-                messages.success(request, 'Rutina asignada correctamente.')
-                return redirect('view_calendar')
-            except:
-                messages.add_message(request, messages.ERROR, 'Una rutina ja assignada aquest dia i hora', extra_tags='danger')
-    else:
-        form = CalendarRoutineForm()
+        day = request.POST.get('day')
+        hour = request.POST.get('hour')
+        routine_id = request.POST.get('routine_id')
 
-    context = {
-        'form': form
-    }
-    return render(request, 'trainers_app/form_assign_routine.html', context)
+        existing_routine = CalendarRoutine.objects.filter(day_of_week=day, time=hour).first()
+        if existing_routine:
+            messages.add_message(request, messages.ERROR, "Ja n'hi ha una rutina asignada", extra_tags='danger')
+        elif routine_id:
+            routine = Routine.objects.get(id=routine_id)
+            CalendarRoutine.objects.create(
+                routine=routine,
+                day_of_week=day,
+                time=hour
+            )
+
+        return redirect('view_calendar')
+
+    return redirect('view_calendar')
 
 @login_required
 @role_required('trainer')
 def remove_routine_from_calendar(request, calendar_routine_id):
-    routine = get_object_or_404(CalendarRoutine, id=calendar_routine_id)
-    routine.delete()
-    messages.success(request, 'Rutina eliminada correctamente.')
+    try:
+        routine = CalendarRoutine.objects.get(id=calendar_routine_id)
+        routine.delete()
+        messages.success(request, 'Rutina eliminada correctamente.')
+    except CalendarRoutine.DoesNotExist:
+            messages.add_message(request, messages.ERROR, "No s'ha pogut eliminar del calendari", extra_tags='danger')
     return redirect('view_calendar')

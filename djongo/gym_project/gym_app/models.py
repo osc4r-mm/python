@@ -132,13 +132,11 @@ class RoutineExercise(models.Model):
 # Definim el model del calendari
 class CalendarRoutine(models.Model):
     routine = models.ForeignKey('Routine', on_delete=models.CASCADE)
-    day_of_week = models.IntegerField(choices=[(i, day) for i, day in enumerate(
-        ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])])
+    day_of_week = models.IntegerField()
     time = models.TimeField()
-    trainer = models.ForeignKey(User, on_delete=models.CASCADE)  # El entrenador que gestiona la rutina
 
     class Meta:
-        unique_together = ('day_of_week', 'time')  # Restringe una rutina por hora en una fecha específica
+        unique_together = ('day_of_week', 'time')
 
     def __str__(self):
         return f"{self.routine.name} - {self.get_day_of_week_display()} {self.time}"
