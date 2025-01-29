@@ -29,7 +29,7 @@
                                     <a href="{% url 'view_routine' routine.routine.id %}">
                                         {{ routine.routine.name }}
                                     </a>
-                                    <a href="{% url 'remove_routine_from_calendar' routine.routine.id %}" class="text-danger ms-2">×</a>
+                                    <a href="{% url 'remove_routine_from_calendar' day=day.day_index hour=hour %}" class="text-danger ms-2">×</a>
                                 {% else %}
                                     <form method="POST" action="{% url 'assign_routine_to_calendar' %}">
                                         {% csrf_token %}

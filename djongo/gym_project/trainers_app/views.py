@@ -81,8 +81,8 @@ def create_routine(request):
                     routine_exercise.routine = routine
                     routine_exercise.save()
 
-                messages.success(request, 'Rutina creada correctament.')
-                return redirect('view_routines')
+            messages.success(request, 'Rutina creada correctament.')
+            return redirect('view_routines')
             
         else:
             messages.add_message(request, messages.ERROR, 'Error al crear la rutina.', extra_tags='danger')
@@ -102,7 +102,6 @@ def edit_routine(request, routine_id):
 
     if request.method == 'POST':
         if routine_form.is_valid() and formset.is_valid():
-
             total_duration = sum(
             form.cleaned_data.get('duration', 0) 
             for form in formset 
@@ -279,11 +278,19 @@ def assign_routine_to_calendar(request):
 
 @login_required
 @role_required('trainer')
-def remove_routine_from_calendar(request, calendar_routine_id):
+def remove_routine_from_calendar(request, day, hour):
     try:
-        routine = CalendarRoutine.objects.get(id=calendar_routine_id)
+        # Convertir la hora de string ("16:00") a objeto time
+        from django.utils.dateparse import parse_time
+        hour_time = parse_time(hour)
+        
+        # Buscar la rutina por día y hora exactos
+        routine = CalendarRoutine.objects.get(
+            day_of_week=day,
+            time=hour_time
+        )
         routine.delete()
         messages.success(request, 'Rutina eliminada correctamente.')
     except CalendarRoutine.DoesNotExist:
-            messages.add_message(request, messages.ERROR, "No s'ha pogut eliminar del calendari", extra_tags='danger')
+        messages.error(request, 'No s\'ha trobat la rutina.')
     return redirect('view_calendar')

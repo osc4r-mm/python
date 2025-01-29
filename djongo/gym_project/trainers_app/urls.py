@@ -14,5 +14,5 @@ urlpatterns = [
     path('exercise/create/', views.create_exercise, name='create_exercise'),
     path('calendar/', views.view_calendar, name='view_calendar'),
     path('calendar/assign/', views.assign_routine_to_calendar, name='assign_routine_to_calendar'),
-    path('calendar/remove/<int:calendar_routine_id>/', views.remove_routine_from_calendar, name='remove_routine_from_calendar'),
+    path('calendar/remove/<int:day>/<str:hour>/', views.remove_routine_from_calendar, name='remove_routine_from_calendar'),
     ]
