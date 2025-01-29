@@ -11,7 +11,7 @@
             <div>
                 {% for hour in time_slots %}
                 <div class="time-slot border rounded p-2 my-1">
-                    {% with routine=calendar_data[day.day_index][hour] %}
+                    {% with routine=calendar_data|slice:":day.day_index"|last|slice:":forloop.counter0"|last %}
                         {% if routine %}
                             <a href="{% url 'view_routine' routine.routine.id %}">
                                 {{ routine.routine.name }}

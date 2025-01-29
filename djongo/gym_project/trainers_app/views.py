@@ -237,17 +237,14 @@ def view_calendar(request):
     # Obtener todas las rutinas asignadas
     assigned_routines = CalendarRoutine.objects.all()
 
-    # Generar `calendar_data` con días y horarios inicializados
-    calendar_data = {
-        i: {hour: None for hour in time_slots} for i in range(7)  # Inicializar con None
-    }
-
-    # Rellenar `calendar_data` con las rutinas asignadas
-    for routine in assigned_routines:
-        day = routine.day_of_week  # 0 = Lunes, 6 = Domingo
-        time = routine.time.strftime('%H:%M')
-        if day in calendar_data and time in calendar_data[day]:
-            calendar_data[day][time] = routine  # Asignar la rutina al día y hora correspondientes
+    # Generar `calendar_data` como una lista de listas
+    calendar_data = []
+    for i in range(7):  # Para cada día de la semana
+        day_routines = []
+        for hour in time_slots:
+            routine = assigned_routines.filter(day_of_week=i, time=hour).first()
+            day_routines.append(routine)  # Agregar la rutina o None si no hay
+        calendar_data.append(day_routines)  # Agregar todas las horas del día
 
     context = {
         'week_days': week_days,
@@ -255,8 +252,6 @@ def view_calendar(request):
         'calendar_data': calendar_data,
     }
     return render(request, 'trainers_app/calendar.html', context)
-
-
 
 @login_required
 @role_required('trainer')
