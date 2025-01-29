@@ -25,6 +25,8 @@ class RoutineExerciseForm(forms.ModelForm):
     
     def clean_duration(self):
         duration = self.cleaned_data.get('duration')
+        if duration is None:
+            raise forms.ValidationError("La duració és obligatòria.")
         if duration <= 0:
             raise forms.ValidationError("La duració ha de ser un valor positiu.")
         return duration
@@ -44,4 +46,14 @@ class ExerciseForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom de l'exercici"}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripció'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+class CalendarRoutineForm(forms.ModelForm):
+    class Meta:
+        model = CalendarRoutine
+        fields = ['routine', 'day_of_week', 'time']
+        widgets = {
+            'day_of_week': forms.Select(choices=[(i, day) for i, day in enumerate(
+                ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])]),
+            'time': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
         }

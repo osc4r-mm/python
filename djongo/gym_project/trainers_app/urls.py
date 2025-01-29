@@ -12,6 +12,7 @@ urlpatterns = [
     path('exercise/<int:exercise_id>/delete/', views.delete_exercise, name='delete_exercise'),
     path('exercise/<int:exercise_id>/edit/', views.edit_exercise, name='edit_exercise'),
     path('exercise/create/', views.create_exercise, name='create_exercise'),
-    path('schedule/', views.view_schedule, name='view_schedule'),
-    path('schedule/edit/', views.edit_schedule, name='edit_schedule'),
+    path('calendar/', views.view_calendar, name='view_calendar'),
+    path('calendar/assign/', views.assign_routine_to_calendar, name='assign_routine_to_calendar'),
+    path('calendar/remove/<int:calendar_routine_id>/', views.remove_routine_from_calendar, name='remove_routine_from_calendar'),
     ]
