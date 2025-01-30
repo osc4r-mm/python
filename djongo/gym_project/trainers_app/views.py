@@ -4,7 +4,6 @@ from django.forms import modelformset_factory
 from datetime import datetime, timedelta
 from django.contrib import messages
 from gym_app.models import *
-from .models import *
 from .forms import *
 from gym_app.utils import role_required
 
