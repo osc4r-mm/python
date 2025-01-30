@@ -1,6 +1,103 @@
 {% extends 'users_app/base.html' %}
 
 {% block content %}
-    <h1>Bienvenido {{ user.username }} al Dashboard del Usuario</h1>
-    <p>Aquí puedes gestionar las rutinas y los ejercicios.</p>
+<div class="container py-5">
+    <h1 class="text-center mb-4">Benvingut {{ user.username }}</h1>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Rutines Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm hover-shadow transition">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-calendar-check fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Les Meves Rutines</h5>
+                    <p class="card-text">Visualitza i gestiona les teves rutines d'entrenament.</p>
+                    <a href="{% url 'create_routine' %}" class="btn btn-primary btn-lg w-100">
+                        Gestionar Rutines
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercicis Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-lightning-charge fs-1 text-success"></i>
+                    </div>
+                    <h5 class="card-title">Exercicis</h5>
+                    <p class="card-text">Explora el catàleg complet d'exercicis disponibles.</p>
+                    <a href="#" class="btn btn-success btn-lg w-100">
+                        Veure Exercicis
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progrés Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-graph-up fs-1 text-info"></i>
+                    </div>
+                    <h5 class="card-title">El Meu Progrés</h5>
+                    <p class="card-text">Segueix el teu progrés i estadístiques d'entrenament.</p>
+                    <a href="#" class="btn btn-info btn-lg w-100 text-white">
+                        Veure Progrés
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perfil Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-circle fs-1 text-warning"></i>
+                    </div>
+                    <h5 class="card-title">Perfil</h5>
+                    <p class="card-text">Actualitza les teves dades personals i preferències.</p>
+                    <a href="{% url 'profile' %}" class="btn btn-warning btn-lg w-100">
+                        Editar Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuració Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-gear fs-1 text-secondary"></i>
+                    </div>
+                    <h5 class="card-title">Configuració</h5>
+                    <p class="card-text">Gestiona les preferències de la teva compte.</p>
+                    <a href="#" class="btn btn-secondary btn-lg w-100">
+                        Configurar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Bootstrap Icons CSS in the head section of your base template -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+<style>
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
 {% endblock %}

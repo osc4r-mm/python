@@ -31,7 +31,7 @@ def user_login(request):
                 messages.success(request, 'Has iniciat sessió correctament!')
                 return redirect('dashboard')
             else:
-                form.add_error(None, "Credencials incorrectes.")
+                messages.add_message(request, messages.ERROR, "Credencials incorrectes", extra_tags='danger')
     else:
         form = UserLoginForm()
     

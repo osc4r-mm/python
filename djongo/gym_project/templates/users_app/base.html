@@ -11,74 +11,10 @@
     </head>
     <body>
         <!-- Barra de navegació -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home' %}">Gimnàs</a>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        {% if user.is_authenticated %}
-                            {% if user.role == 'trainer' %}
-                                <!-- Desplegable per entrenadors -->
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="trainerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Entrenador
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="trainerDropdown">
-                                        <li><a class="dropdown-item" href="{% url 'create_exercise' %}">Crear Exercici</a></li>
-                                        <li><a class="dropdown-item" href="{% url 'create_routine' %}">Crear Rutina</a></li>
-                                        <hr>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{% url 'profile' %}">El teu perfil</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{% url 'logout' %}">Tancar sessió</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            {% elif user.role == 'user' %}
-                            <!-- Desplegable per users -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Usuari
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" href="{% url 'create_routine' %}">Crear Rutina</a></li>
-                                    <hr>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'profile' %}">El teu perfil</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'logout' %}">Tancar sessió</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            {% endif %}
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'login' %}">Iniciar sessió</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'register' %}">Registre</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        {% include 'users_app/nav.html' %}
         
-
         <!-- Missatges de errors o confirmacions -->
-        {% if messages %}
-            <div class="container mt-3">
-                {% for message in messages %}
-                    <!-- Missatges amb recuadre centrat i colors dependents del tipus -->
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mx-auto" style="max-width: 600px;" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+        {% include 'users_app/messages.html' %}
 
         <!-- Secció de contingut de les plantilles -->
         {% block content %}
