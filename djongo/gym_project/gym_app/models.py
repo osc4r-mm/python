@@ -94,6 +94,11 @@ class Routine(models.Model):
         Exercise, 
         through='RoutineExercise',
     )
+    participants = models.ManyToManyField(
+        User, 
+        through='RoutineSubscription', 
+        related_name='subscribed_routines'
+    )
 
     def get_total_duration(self):
         return sum(
@@ -131,12 +136,22 @@ class RoutineExercise(models.Model):
 
 # Definim el model del calendari
 class CalendarRoutine(models.Model):
+    DAY_OF_WEEK_CHOICES = [
+        (0, 'Lunes'),
+        (1, 'Martes'),
+        (2, 'Miércoles'),
+        (3, 'Jueves'),
+        (4, 'Viernes'),
+        (5, 'Sábado'),
+        (6, 'Domingo'),
+    ]
+    
     routine = models.ForeignKey('Routine', on_delete=models.CASCADE)
     day_of_week = models.IntegerField()
     time = models.TimeField()
 
     class Meta:
-        unique_together = ('day_of_week', 'time')
+        unique_together = ('routine', 'day_of_week', 'time')
 
     def __str__(self):
         return f"{self.routine.name} - {self.get_day_of_week_display()} {self.time}"
