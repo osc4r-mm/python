@@ -11,6 +11,20 @@ class User(AbstractUser):
         ('director', 'Director'),
     ]
 
+    PLAN_CHOICES = [
+        ('free', 'Sense Pla'),
+        ('basic', 'Normal'),
+        ('medium', 'Avanzat'),
+        ('premium', 'Premium'),
+    ]
+
+    ROUTINE_LIMITS = {
+        'free': 0,
+        'basic': 1,
+        'medium': 3,
+        'premium': float('inf')
+    }
+
     email = models.EmailField(
         unique=True,
         max_length=50,
@@ -29,10 +43,35 @@ class User(AbstractUser):
         choices=ROLE_CHOICES, 
         default='user',
     )
+    plan_type = models.CharField(
+        max_length=10,
+        choices=ROUTINE_LIMITS,
+        default="free"
+    )
+    routines_usage = models.PositiveIntegerField(
+        default=0
+    )
 
     class Meta:
         db_table = 'users'
 
+    def can_join_routine(self):
+        return self.routines_usage < self.ROUTINE_LIMITS[self.plan_type]
+    
+    def join(self):
+        if self.can_join_routine():
+            self.routines_usage += 1
+            self.save()
+            return True
+        return False
+
+    def leave(self):
+        if self.routines_usage > 0:
+            self.routines_usage -= 1
+            self.save()
+            return True
+        return False
+    
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
@@ -121,10 +160,7 @@ class RoutineExercise(models.Model):
         blank=True, 
         null=True,
     )
-    duration = models.PositiveIntegerField(
-        blank=False, 
-        null=False,
-    )
+    duration = models.PositiveIntegerField(   )
 
     def clean(self):
         if self.duration is None or self.duration <= 0:
@@ -149,9 +185,20 @@ class CalendarRoutine(models.Model):
     routine = models.ForeignKey('Routine', on_delete=models.CASCADE)
     day_of_week = models.IntegerField()
     time = models.TimeField()
+    participants = models.ManyToManyField(
+        User,
+        related_name='calendar_routines'
+    )
 
     class Meta:
         unique_together = ('routine', 'day_of_week', 'time')
+
+    def add_participant(self, user):
+        if self.participants.count() >= 10:
+            raise ValidationError("Ja hi ha 10 participants a aquest horari")
+        if user in self.routine.participants.all():
+            raise ValidationError("No pots unirte 2 vegades a un horari")
+        self.participants.add(user)
 
     def __str__(self):
         return f"{self.routine.name} - {self.get_day_of_week_display()} {self.time}"
