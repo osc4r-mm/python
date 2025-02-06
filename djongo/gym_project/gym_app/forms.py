@@ -49,15 +49,46 @@ class UserLoginForm(forms.Form):
 
 # Formulari per editar el perfil d'un usuari
 class EditProfileForm(forms.ModelForm):
+    height = forms.DecimalField(
+        max_digits=3,
+        min_value=50,
+        max_value=250,
+        required=False,
+        label="Altura (cm)",
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'En cm(opcional)'})
+    )
+
+    weight = forms.DecimalField(
+        max_digits=3,
+        min_value=0,
+        max_value=350,
+        required=False,
+        label="Peso (kg)",
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'En kg (opcional)'})
+    )
+
+    gender = forms.ChoiceField(
+        choices=[('', 'Selecciona un genere')] + User.GENDER_CHOICES,
+        required=False,
+        label="Sexe",
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
+
     password = forms.CharField(
-        widget=forms.PasswordInput(), 
         required=False, 
-        label="Nueva contraseña"
+        label="Nueva contraseña",
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Escriu una nova contrasenya'}),
     )
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        fields = ['username', 'first_name', 'last_name', 'email', 'weight', 'height', 'gender']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
     
     def clean_first_name(self):
         first_name = self.cleaned_data.get('first_name')

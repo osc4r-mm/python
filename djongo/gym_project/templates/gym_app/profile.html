@@ -1,34 +1,185 @@
 {% extends base_template %}
+{% load custom_filters %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">El teu perfil</h2>
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <div class="mb-3">
-                <strong>Nom d'usuari:</strong>
-                <p>{{ user.username }}</p>
+<div class="container py-5">
+    <div class="row">
+        <!-- Columna de Avatar y Datos Principales -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4 bg-light">
+                <div class="card-body text-center">
+                    <div class="avatar-wrapper mb-4">
+                        <div class="default-avatar rounded-circle bg-info d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                            <span class="display-4 text-white">{{ user.username|make_list|first|upper }}</span>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">{{ user.username }}</h3>
+                    <p class="text-muted">{{ user.get_role_display }}</p>
+                    {% if user.role == "user" %}
+                        <div class="plan-badge mb-3">
+                            <span class="badge {% if user.plan_type == 'premium' %}bg-warning{% elif user.plan_type == 'medium' %}bg-primary{% elif user.plan_type == 'basic' %}bg-info{% else %}bg-secondary{% endif %} p-2">
+                                {% if user.plan_type == 'premium' %}👑 Beast Mode
+                                {% elif user.plan_type == 'medium' %}💪 Máquina
+                                {% elif user.plan_type == 'basic' %}🏃 Principiante
+                                {% else %}🐢 Modo Plebe{% endif %}
+                            </span>
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn btn-secondary btn-lg m-3" onclick="window.history.back();">
+                    Tornar
+                </button>
             </div>
-            <div class="mb-3">
-                <strong>Nom complet:</strong>
-                <p>{{ user.first_name }} {{ user.last_name }}</p>
-            </div>
-            <div class="mb-3">
-                <strong>Rol:</strong>
-                <p>{{ user.role }}</p>
-            </div>
-            <div class="mb-3">
-                <strong>Correu electrònic:</strong>
-                <p>{{ user.email }}</p>
-            </div>
-            <div class="mb-3">
-                <strong>Data de registre:</strong>
-                <p>{{ user.date_joined|date:"d-m-Y" }}</p>
-            </div>
-            <div class="d-flex justify-content-between">
-                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Editar perfil</a>
+        </div>
+
+        <!-- Columna de Información Principal -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📋 Informació Personal</h5>
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <label class="text-muted">Nom complet</label>
+                                <p class="mb-3">{{ user.first_name }} {{ user.last_name }}</p>
+                            </div>
+                            <div class="info-group">
+                                <label class="text-muted">Email</label>
+                                <p class="mb-3">{{ user.email }}</p>
+                            </div>
+                            {% if user.role == "user" %}
+                            <div class="info-group">
+                                <label class="text-muted">Pla Actual</label>
+                                <p class="mb-3">{{ user.get_plan_type_display }}</p>
+                            </div>
+                            <div class="info-group">
+                                <label class="text-muted">Rutines Actives</label>
+                                <p class="mb-3">{{ user.routines_usage }} / 
+                                    {% if user.plan_type == 'premium' %}∞
+                                    {% else %}{{ user.ROUTINE_LIMITS|get_item:user.plan_type }}{% endif %}
+                                </p>
+                            </div>
+                            {% endif %}
+                            <div class="info-group">
+                                <label class="text-muted">Data de Registre</label>
+                                <p class="mb-3">{{ user.date_joined|date:"d-m-Y" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <label class="text-muted">Sexe</label>
+                                <p class="mb-3">{{ user.get_gender_display|default:"No especificat" }}</p>
+                            </div>
+
+                            <div class="info-group">
+                                <label class="text-muted">Altura</label>
+                                <p class="mb-3">{{ user.height|default:"No especificat" }} {% if user.height %}cm{% endif %}</p>
+                            </div>
+                            
+                            <div class="info-group">
+                                <label class="text-muted">Pes</label>
+                                <p class="mb-3">{{ user.weight|default:"No especificat" }} {% if user.height %}kg{% endif %}</p>
+                            </div>
+                            
+                            <div class="info-group">
+                                <label class="text-muted">Edat</label>
+                                <p class="mb-3">{{ user.age|default:"No especificat" }} {% if user.height %}anys{% endif %}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                    {% if user.role == "user" %}
+                    <div class="mt-4">
+                        <h6 class="mb-3">🎯 Pròximes Sessions de Tortura</h6>
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Dia</th>
+                                        <th>Hora</th>
+                                        <th>Rutina</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for session in upcoming_sessions %}
+                                    <tr>
+                                        <td>{{ session.get_day_of_week_display }}</td>
+                                        <td>{{ session.time|time:"H:i" }}</td>
+                                        <td>
+                                            <a href="{% url 'view_routine' session.routine.id %}" class="routine-link">
+                                                {{ session.routine.name }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <p class="text-muted mb-0">Ei, gandul! 😴 No tens cap rutina programada! Mou el cul!</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.info-group label {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.info-group p {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.avatar-wrapper {
+    position: relative;
+}
+
+.plan-badge {
+    transform: translateY(-10px);
+}
+
+.card {
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1) !important;
+}
+.routine-link {
+    display: inline-block;
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.routine-link:hover {
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
+}
+</style>
 {% endblock %}

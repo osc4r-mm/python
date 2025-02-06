@@ -4,6 +4,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.user_dashboard, name='user'),
-    path('classes/', views.class_schedule, name='nombre_url_listado_clases'),
-    path('book/<int:calendar_routine_id>/', views.book_calendar_routine, name='book_calendar_routine'),
+    path('calendar/', views.calendar_view, name='calendar_view'),
+    path('join/<int:calendar_routine_id>/', views.join_routine, name='join_routine'),
+    path('leave/<int:calendar_routine_id>/', views.leave_routine, name='leave_routine'),
+    path('subscriptions/', views.subscription_plans, name='subscription_plans'),
     ]

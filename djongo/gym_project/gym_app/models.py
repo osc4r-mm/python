@@ -25,6 +25,11 @@ class User(AbstractUser):
         'premium': float('inf')
     }
 
+    GENDER_CHOICES = [
+        ('male', 'Home'),
+        ('female', 'Dona'),
+    ]
+
     email = models.EmailField(
         unique=True,
         max_length=50,
@@ -45,11 +50,32 @@ class User(AbstractUser):
     )
     plan_type = models.CharField(
         max_length=10,
-        choices=ROUTINE_LIMITS,
+        choices=PLAN_CHOICES,
         default="free"
     )
     routines_usage = models.PositiveIntegerField(
         default=0
+    )
+
+    height = models.IntegerField(
+        blank=True, 
+        null=True,
+    )
+    weight = models.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        blank=True, 
+        null=True,
+    )
+    age = models.PositiveIntegerField(
+        blank=True, 
+        null=True,
+    )
+    gender = models.CharField(
+        max_length=6, 
+        choices=GENDER_CHOICES, 
+        blank=True, 
+        null=True
     )
 
     class Meta:
@@ -133,11 +159,6 @@ class Routine(models.Model):
         Exercise, 
         through='RoutineExercise',
     )
-    participants = models.ManyToManyField(
-        User, 
-        through='RoutineSubscription', 
-        related_name='subscribed_routines'
-    )
 
     def get_total_duration(self):
         return sum(
@@ -173,17 +194,17 @@ class RoutineExercise(models.Model):
 # Definim el model del calendari
 class CalendarRoutine(models.Model):
     DAY_OF_WEEK_CHOICES = [
-        (0, 'Lunes'),
-        (1, 'Martes'),
-        (2, 'Miércoles'),
-        (3, 'Jueves'),
-        (4, 'Viernes'),
-        (5, 'Sábado'),
-        (6, 'Domingo'),
+        (0, 'Dilluns'),
+        (1, 'Dimarts'),
+        (2, 'Dimecres'),
+        (3, 'Dijous'),
+        (4, 'Divendres'),
+        (5, 'Dissabte'),
+        (6, 'Diumenge'),
     ]
     
     routine = models.ForeignKey('Routine', on_delete=models.CASCADE)
-    day_of_week = models.IntegerField()
+    day_of_week = models.IntegerField(choices=DAY_OF_WEEK_CHOICES)
     time = models.TimeField()
     participants = models.ManyToManyField(
         User,

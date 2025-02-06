@@ -30,22 +30,6 @@ def view_routines(request):
     }
     return render(request, 'trainers_app/routines.html', context)
 
-@login_required
-@role_required('trainer')
-def view_routine(request, routine_id):
-    routine = get_object_or_404(Routine, id=routine_id)
-    routine_exercises = routine.routineexercise_set.all()
-
-    total_duration = routine.get_total_duration
-    
-    context = {
-        'routine': routine,
-        'routine_exercises': routine_exercises,
-        'total_duration': total_duration,
-    }
-    return render(request, 'trainers_app/routine.html', context)
-
-
 def handle_routine_form(request, routine=None):
     is_editing = routine is not None
     
@@ -229,7 +213,7 @@ def view_calendar(request):
         for i in range(7)
     ]
 
-    # Ggnerar caselles de 16:00 a 21:00
+    # Generar caselles de 16:00 a 21:00
     time_slots = [f"{hour}:00" for hour in range(16, 22)]
 
     # obtenir routines asignades al calendari

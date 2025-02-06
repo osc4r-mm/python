@@ -1,0 +1,62 @@
+{% extends 'users_app/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Calendario de Torturas Semanales 💪</h1>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Hora</th>
+                    {% for day in week_days %}
+                    <th class="{% if day.is_today %}bg-primary text-white{% else %}bg-secondary text-white{% endif %}">
+                        {{ day.name }} <br>
+                        <small>{{ day.date }}</small>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for hour in time_slots %}
+                <tr>
+                    <td class="align-middle bg-light"><strong>{{ hour }}</strong></td>
+                    {% for day in week_days %}
+                    <td class="align-middle">
+                        {% with day_data=calendar_data|get_item:day.day_index %}
+                        {% with calendar_routine=day_data|get_item:hour %}
+                        {% if calendar_routine %}
+                            <div class="routine-card">
+                                <h6>{{ calendar_routine.routine.name }}</h6>
+                                <small class="text-muted">{{ calendar_routine.participants.count }}/10 participantes</small>
+                                
+                                {% if request.user in calendar_routine.participants.all %}
+                                    <form action="{% url 'leave_routine' calendar_routine.id %}" method="POST" class="mt-2">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-warning btn-sm">
+                                            ¡Socorro, sácame de aquí! 🏃‍♂️
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form action="{% url 'join_routine' calendar_routine.id %}" method="POST" class="mt-2">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm" 
+                                                {% if calendar_routine.participants.count >= 10 or not user.can_join_routine %}disabled{% endif %}>
+                                            ¡Me apunto al dolor! 💪
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        {% endwith %}
+                        {% endwith %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
