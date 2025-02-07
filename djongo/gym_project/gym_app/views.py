@@ -133,6 +133,7 @@ def logout_view(request):
 @login_required
 def view_routine(request, routine_id):
     base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
+    
     routine = get_object_or_404(Routine, id=routine_id)
     routine_exercises = routine.routineexercise_set.all()
     total_duration = routine.get_total_duration

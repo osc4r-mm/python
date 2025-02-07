@@ -11,7 +11,6 @@
                     {% for day in week_days %}
                     <th class="{% if day.is_today %}bg-primary text-white{% else %}bg-secondary text-white{% endif %}">
                         {{ day.name }} <br>
-                        <small>{{ day.date }}</small>
                     </th>
                     {% endfor %}
                 </tr>

@@ -8,7 +8,7 @@ from gym_app.utils import role_required
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-# Vista per l'usuari
+# Vista default per l'usuari
 @login_required
 @role_required('user')
 def user_dashboard(request):
@@ -16,9 +16,12 @@ def user_dashboard(request):
         return redirect("home")
     return render(request, 'users_app/dashboard.html')
 
+# Vista per veure el calendari
 @login_required
 def calendar_view(request):
-    # Obtener días de la semana
+    base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
+
+    # Obtenir dies de la setmana
     today = timezone.now()
     day_names = dict(CalendarRoutine.DAY_OF_WEEK_CHOICES)
     week_days = []
@@ -34,7 +37,7 @@ def calendar_view(request):
     # Ggnerar caselles de 16:00 a 21:00
     time_slots = [f"{hour}:00" for hour in range(16, 22)]
 
-    # Obtener rutinas del calendario
+    # Obtenir rutines del calendari
     calendar_data = {}
     for day in range(7):
         calendar_data[day] = {}
@@ -48,23 +51,24 @@ def calendar_view(request):
         'week_days': week_days,
         'time_slots': time_slots,
         'calendar_data': calendar_data,
+        'base_template': base_template,
     }
     
     return render(request, 'users_app/calendar.html', context)
 
+# Vista per unirse a una rutina del calendari
 @login_required
+@role_required('user')
 def join_routine(request, calendar_routine_id):
     if request.method == 'POST':
         calendar_routine = get_object_or_404(CalendarRoutine, id=calendar_routine_id)
         
-        # Verificaciones
         if calendar_routine.participants.count() >= 10:
             messages.add_message(request, messages.ERROR, 'Massa tard, hi han 10 valents abans que tu', extra_tags='danger')
         
         if not request.user.can_join_routine():
                 messages.add_message(request, messages.ERROR, '¡Eh, tigre! El teu pla de pobre no da per mes. ¡Actualítzat! 💪', extra_tags='danger')
 
-        # Todo OK, ¡a sufrir!
         if request.user.join():
             calendar_routine.participants.add(request.user)
             if not request.user.can_join_routine():
@@ -72,7 +76,9 @@ def join_routine(request, calendar_routine_id):
         
     return redirect('calendar_view')
 
+# Vista per sortir d'una rutina del calendari
 @login_required
+@role_required('user')
 def leave_routine(request, calendar_routine_id):
     if request.method == 'POST':
         calendar_routine = get_object_or_404(CalendarRoutine, id=calendar_routine_id)
@@ -83,26 +89,7 @@ def leave_routine(request, calendar_routine_id):
         
     return redirect('calendar_view')
 
-@login_required
-@role_required('trainer')
-def assign_routine_to_calendar(request):
-    if request.method == 'POST':
-        day = int(request.POST.get('day'))
-        hour = request.POST.get('hour')
-        routine_id = request.POST.get('routine_id')
-        
-        if routine_id:
-            time = datetime.strptime(hour, '%H:%M').time()
-            routine = get_object_or_404(Routine, id=routine_id)
-            
-            CalendarRoutine.objects.create(
-                routine=routine,
-                day_of_week=day,
-                time=time
-            )
-            
-    return redirect('calendar_view')
-
+# Vista per escollir subscripcio
 @login_required
 def subscription_plans(request):
     if request.method == 'POST':
@@ -137,12 +124,12 @@ def subscription_plans(request):
         
         return redirect('user')
     
-    # Render subscription page
     context = {
         'current_plan': request.user.plan_type
     }
     return render(request, 'users_app/subscriptions.html', context)
 
+# Vista per escollir subscripcio
 @login_required
 @role_required('user')
 def view_routines(request):

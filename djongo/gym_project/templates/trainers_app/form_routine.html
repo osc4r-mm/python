@@ -92,7 +92,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Inicializar el contador de formularios con el valor de TOTAL_FORMS
+    // Inicialitzar comptador de formularis amb el valor de TOTAL_FORMS
     let totalForms = parseInt(document.querySelector('input[name="form-TOTAL_FORMS"]').value);
 
     const templateRow = document.querySelector('#exercise-table tbody tr:first-child').cloneNode(true);
@@ -115,28 +115,28 @@ document.addEventListener('DOMContentLoaded', function () {
             field.id = field.id.replace(/form-(\d+)-/, `form-${totalForms}-`);
         });
 
-        // Restablecer el valor del campo 'id' (si existe)
+        // Restableix el valor del camp 'id' (si existeix)
         const idField = newRow.querySelector('input[name$="-id"]');
         if (idField) {
-            idField.value = ''; // Deja el campo vacío para nuevos formularios
+            idField.value = '';
         }
 
         tableBody.appendChild(newRow);
 
-        // Actualizar el TOTAL_FORMS
+        // Actualitzar el TOTAL_FORMS
         document.querySelector('input[name="form-TOTAL_FORMS"]').value = ++totalForms;
     });
 
-    // Eliminar una exercici
+    // Eliminar un exercici
     document.querySelector('#exercise-table').addEventListener('click', function(event) {
         if (event.target.classList.contains('btn-delete-row')) {
             const row = event.target.closest('tr');
             const deleteField = row.querySelector('input[name$="-DELETE"]');
 
             if (deleteField) {
-                deleteField.value = 'on'; // Marca DELETE per a formularis existents
+                deleteField.value = 'on';
             }
-            row.style.display = 'none'; // Amaga la fila
+            row.style.display = 'none';
         }
     });
 });

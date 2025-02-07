@@ -245,6 +245,7 @@ def view_calendar(request):
     }
     return render(request, 'trainers_app/calendar.html', context)
 
+# Vista per assignar uan rutina al calendari
 @login_required
 @role_required('trainer')
 def assign_routine_to_calendar(request):

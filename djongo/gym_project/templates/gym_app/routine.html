@@ -7,13 +7,13 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="display-4 mb-0">{{ routine.name }}</h1>
-                    <p class="text-muted mb-2">por {{ routine.trainer.username }}</p>
+                    <p class="text-muted mb-2">per {{ routine.trainer.username }}</p>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex justify-content-md-end align-items-center gap-3">
                         <div class="text-center px-3">
                             <h4 class="mb-0">{{ routine.get_total_duration }}</h4>
-                            <small class="text-muted">minutos</small>
+                            <small class="text-muted">minuts</small>
                         </div>
                         <div class="text-center px-3 border-start">
                             <div class="difficulty-container">
@@ -24,7 +24,7 @@
                                         {{ routine.get_difficulty_display }}
                                     </span>
                                 </h4>
-                                <small class="text-muted">dificultad</small>
+                                <small class="text-muted">dificultat</small>
                             </div>
                         </div>
                     </div>
@@ -33,10 +33,9 @@
         </div>
     </div>
 
-    <!-- Lista de ejercicios con más swag 💪 -->
     <div class="row">
         <div class="col-12">
-            <h2 class="mb-4">Ejercicios en esta rutina</h2>
+            <h2 class="mb-4">Exercicis en aquesta rutina</h2>
         </div>
     </div>
 
@@ -45,7 +44,6 @@
         <div class="col-md-6">
             <div class="card h-100 shadow-sm hover-card">
                 <div class="card-body">
-                    <!-- Número de orden del ejercicio -->
                     <div class="exercise-order">{{ forloop.counter }}</div>
                     
                     <div class="d-flex justify-content-between align-items-start mb-3">
@@ -138,8 +136,8 @@
     position: absolute;
     top: -10px;
     left: -10px;
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     background-color: #0d6efd;
     color: white;
     border-radius: 50%;
@@ -147,7 +145,7 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 .exercise-stats {

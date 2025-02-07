@@ -5,7 +5,6 @@
     <h1 class="text-center mb-4">📅 Les Meves Rutines</h1>
 
     {% if routines %}
-        {# Agrupamos las rutinas por día de la semana #}
         {% regroup routines by day_of_week as day_groups %}
         <div class="list-group">
             {% for group in day_groups %}

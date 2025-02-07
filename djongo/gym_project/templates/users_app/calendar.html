@@ -1,8 +1,8 @@
-{% extends 'users_app/base.html' %}
+{% extends base_template %}
 {% load custom_filters %}
 {% block content %}
 <div class="container">
-    <h1 class="text-center mb-4">Calendario de Torturas Semanales 💪</h1>
+    <h1 class="text-center mb-4">Calendari de Tortures Semanals 💪</h1>
     <div class="table-responsive">
         <table class="table table-bordered text-center">
             <thead class="thead-dark">
@@ -33,21 +33,23 @@
                                     <span class="participants">
                                         {{ calendar_routine.participants.count }}/10
                                     </span>
-                                    {% if request.user in calendar_routine.participants.all %}
-                                    <form action="{% url 'leave_routine' calendar_routine.id %}" method="POST" class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-warning btn-xs">
-                                            🏃‍♂️ ¡Fugir!
-                                        </button>
-                                    </form>
-                                    {% else %}
-                                    <form action="{% url 'join_routine' calendar_routine.id %}" method="POST" class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-success btn-xs"
-                                                {% if calendar_routine.participants.count >= 10 or not user.can_join_routine %}disabled{% endif %}>
-                                            💪 ¡Unir-se!
-                                        </button>
-                                    </form>
+                                    {% if user.role == 'user' %}
+                                        {% if request.user in calendar_routine.participants.all %}
+                                        <form action="{% url 'leave_routine' calendar_routine.id %}" method="POST" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-warning btn-xs">
+                                                🏃‍♂️ ¡Fugir!
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <form action="{% url 'join_routine' calendar_routine.id %}" method="POST" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success btn-xs"
+                                                    {% if calendar_routine.participants.count >= 10 or not user.can_join_routine %}disabled{% endif %}>
+                                                💪 ¡Unir-se!
+                                            </button>
+                                        </form>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </div>
