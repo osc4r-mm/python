@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'gym_app',
     'trainers_app',
     'users_app',
+    'admin_app',
+    'gerent_app',
 ]
 
 MIDDLEWARE = [

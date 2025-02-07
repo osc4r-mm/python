@@ -6,7 +6,7 @@ from .models import *
 from .forms import *
 from gym_app.utils import role_required
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # Vista default per l'usuari
 @login_required
@@ -18,7 +18,7 @@ def user_dashboard(request):
 
 # Vista per veure el calendari
 @login_required
-def calendar_view(request):
+def view_calendar_user(request):
     base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
 
     # Obtenir dies de la setmana
@@ -74,7 +74,7 @@ def join_routine(request, calendar_routine_id):
             if not request.user.can_join_routine():
                 messages.warning(request, "Has omplert totes les teves quotes")
         
-    return redirect('calendar_view')
+    return redirect('view_calendar_user')
 
 # Vista per sortir d'una rutina del calendari
 @login_required
@@ -87,7 +87,7 @@ def leave_routine(request, calendar_routine_id):
             calendar_routine.participants.remove(request.user)
             request.user.leave()
         
-    return redirect('calendar_view')
+    return redirect('view_calendar_user')
 
 # Vista per escollir subscripcio
 @login_required
@@ -129,7 +129,7 @@ def subscription_plans(request):
     }
     return render(request, 'users_app/subscriptions.html', context)
 
-# Vista per escollir subscripcio
+# Vista per veure les rutines a las que esta apuntat l'usuari
 @login_required
 @role_required('user')
 def view_routines(request):

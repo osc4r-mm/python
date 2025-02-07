@@ -50,7 +50,10 @@
                                     {{ form_ex.exercise }}
                                 </td>
                                 <td>
-                                    {{ form_ex.duration }}
+                                    <div class="position-relative">
+                                        {{ form_ex.duration }}
+                                        <div class="text-danger small">{{ form_ex.duration.errors }}</div>
+                                    </div>
                                 </td>
                                 <td>
                                     {{ form_ex.repetitions }}

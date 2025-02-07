@@ -1,0 +1,139 @@
+{% extends 'admin_app/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Benvingut {{ user.username }}</h1>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Rutines Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm hover-shadow transition">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-auto">
+                        <div class="mb-3">
+                            <i class="bi bi-shield-lock fs-1 text-danger"></i>
+                        </div>
+                        <h5 class="card-title">Gestió d'Usuaris</h5>
+                        <p class="card-text">Registra nous entrenadors i usuaris. Amb gran poder ve una gran... bueno, ja saps! 😈</p>
+                    </div>
+                    <!-- El botón del PODER -->
+                    <div class="mt-3">
+                        <a href="{% url 'register' %}" class="btn btn-danger btn-lg w-100">
+                            Crear Nous Usuaris
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendari Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-auto">
+                        <div class="mb-3">
+                            <i class="bi bi-calendar3 fs-1 text-success"></i>
+                        </div>
+                        <h5 class="card-title">Calendari</h5>
+                        <p class="card-text">Visualitza les rutines de la setmana.</p>
+                    </div>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-success btn-lg w-100">
+                            Veure Calendari
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-auto">
+                        <div class="mb-3">
+                            <i class="bi bi-cash-stack fs-1 text-success"></i>
+                        </div>
+                        <h5 class="card-title">¡Millora el teu Pla!</h5>
+                        <p class="card-text">
+                            {% if user.plan_type == 'free' %}
+                            De debò encara estàs amb el pla gratuït? Deixa de ser tacany i evoluciona! 🐢→🦁
+                            {% elif user.plan_type == 'basic' %}
+                            Estàs en el bàsic! No creus que et mereixes més dolor... vull dir, progrés? 😏
+                            {% elif user.plan_type == 'medium' %}
+                                Quasi al cim! Només et falta una empenta per ser una bèstia total 💪
+                            {% else %}
+                            Ets premium, baby! Però sempre pots revisar el teu regnat 👑
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-success btn-lg w-100 text-white">
+                            {% if user.plan_type == 'free' %}
+                                ¡Deixa de ser pobre! 🚀
+                            {% elif user.plan_type == 'premium' %}
+                                Veure el meu Imperi 👑
+                            {% else %}
+                                ¡Vull més poder!
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perfil Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-auto">
+                        <div class="mb-3">
+                            <i class="bi bi-person-circle fs-1 text-warning"></i>
+                        </div>
+                        <h5 class="card-title">Perfil</h5>
+                        <p class="card-text">Actualitza les teves dades personals i preferències.</p>
+                    </div>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-warning btn-lg w-100">
+                            Editar Perfil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuració Card -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-auto">
+                        <div class="mb-3">
+                            <i class="bi bi-gear fs-1 text-secondary"></i>
+                        </div>
+                        <h5 class="card-title">Configuració</h5>
+                        <p class="card-text">Gestiona les preferències de la teva compte.</p>
+                    </div>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-secondary btn-lg w-100">
+                            Configurar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Bootstrap Icons CSS in the head section of your base template -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+<style>
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}

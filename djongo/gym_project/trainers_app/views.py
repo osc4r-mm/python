@@ -1,19 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory
+from gym_app.utils import role_required
 from datetime import datetime, timedelta
 from django.contrib import messages
 from gym_app.models import *
 from .forms import *
-from gym_app.utils import role_required
 
-# Vista del home de l'entrenador
+# Vista default per l'entrenador
 @login_required
 @role_required('trainer')
 def trainer_dashboard(request):
     return render(request, 'trainers_app/dashboard.html')
 
-# Routines
+# Vista per veure totes les rutines
 @login_required
 @role_required('trainer')
 def view_routines(request):
@@ -30,6 +30,7 @@ def view_routines(request):
     }
     return render(request, 'gym_app/routines.html', context)
 
+# Funcio per fer el formset sense repetir codi en crear i editar rutina
 def handle_routine_form(request, routine=None):
     is_editing = routine is not None
     
@@ -47,6 +48,7 @@ def handle_routine_form(request, routine=None):
         
     return routine_form, formset
 
+# Vista per crear rutina
 @login_required
 @role_required('trainer')
 def create_routine(request):
@@ -85,7 +87,7 @@ def create_routine(request):
     }
     return render(request, 'trainers_app/form_routine.html', context)
 
-
+# Vista per editar rutina
 @login_required
 @role_required('trainer')
 def edit_routine(request, routine_id):
@@ -126,6 +128,7 @@ def edit_routine(request, routine_id):
     }  
     return render(request, 'trainers_app/form_routine.html', context)
 
+# Vista per eliminar rutina
 @login_required
 @role_required('trainer')
 def delete_routine(request, routine_id):
@@ -139,7 +142,7 @@ def delete_routine(request, routine_id):
     
     return redirect('view_routines')
 
-# Exercises
+# Vista per veure tots els exercicis
 @login_required
 @role_required('trainer')
 def view_exercises(request):
@@ -150,6 +153,7 @@ def view_exercises(request):
     }
     return render(request, 'trainers_app/exercises.html', context)
 
+# Vista per crear un exercici
 @login_required
 @role_required('trainer')
 def create_exercise(request):
@@ -169,6 +173,7 @@ def create_exercise(request):
     }
     return render(request, 'trainers_app/form_exercise.html', context)
 
+# Vista per editar un exercici
 @login_required
 @role_required('trainer')
 def edit_exercise(request, exercise_id):
@@ -192,6 +197,7 @@ def edit_exercise(request, exercise_id):
     }
     return render(request, 'trainers_app/form_exercise.html', context)
 
+# Vista per eliminar un exercici
 @login_required
 @role_required('trainer')
 def delete_exercise(request, exercise_id):
@@ -204,9 +210,10 @@ def delete_exercise(request, exercise_id):
         messages.add_message(request, messages.ERROR, "No es pot eliminar l'exercici", extra_tags='danger')
     
     return redirect('view_exercises')
-    
+
+# Vista per veure el calendari
 @login_required
-def view_calendar(request):
+def view_calendar_trainer(request):
     today = datetime.now()
     start_of_week = today - timedelta(days=today.weekday())  # Lunes
 
@@ -265,17 +272,18 @@ def assign_routine_to_calendar(request):
                 time=hour
             )
 
-    return redirect('view_calendar')
+    return redirect('view_calendar_trainer')
 
+# Vista per treure una rutina del calendari
 @login_required
 @role_required('trainer')
 def remove_routine_from_calendar(request, day, hour):
     try:
-        # Convertir la hora de string ("16:00") a objeto time
+        # Convertir l'hora de string ("16:00") a objecte time
         from django.utils.dateparse import parse_time
         hour_time = parse_time(hour)
         
-        # Buscar la rutina por día y hora exactos
+        # Buscar la rutina per día i hora
         routine = CalendarRoutine.objects.get(
             day_of_week=day,
             time=hour_time
@@ -284,4 +292,4 @@ def remove_routine_from_calendar(request, day, hour):
         messages.success(request, 'Rutina eliminada correctamente.')
     except CalendarRoutine.DoesNotExist:
         messages.error(request, 'No s\'ha trobat la rutina.')
-    return redirect('view_calendar')
+    return redirect('view_calendar_trainer')

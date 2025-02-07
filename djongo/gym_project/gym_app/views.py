@@ -6,18 +6,18 @@ from django.utils import timezone
 from .models import *
 from .forms import *
 
-# Vista per al registre d'un nou usuari
-def register(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Registre completat amb èxit!')
-            return redirect('login')
-    else:
-        form = UserRegistrationForm()
-    return render(request, 'gym_app/register.html', {'form': form})
+
+def dashboard(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if request.user.role == 'trainer':
+        return redirect('trainer')
+    if request.user.role == 'user':
+        return redirect('user')
+    if request.user.role == 'gerent':
+        return redirect('gerent')
+    if request.user.role == 'admin':
+        return redirect('dashboard_admin')
 
 # Vista per iniciar sessió d'un usuari
 def user_login(request):
@@ -39,14 +39,6 @@ def user_login(request):
         'form': form
     }
     return render(request, 'gym_app/login.html', context)
-
-def dashboard(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-    if request.user.role == 'trainer':
-        return redirect('trainer')
-    if request.user.role == 'user':
-        return redirect('user')
 
 # Vista per mostrar el perfil de l'usuari (requereix estar autenticat)
 @login_required

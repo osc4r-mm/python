@@ -3,6 +3,11 @@
 {% block content %}
 <div class="container">
     <h1 class="text-center mb-4">Calendari de Tortures Semanals 💪</h1>
+    {% if user.role == 'trainer' %}
+    <div class="text-center mb-4">
+        <a href="{% url 'view_calendar_trainer' %}" class="btn btn-secondary">Canvia el calendari</a>
+    </div>
+    {% endif %}
     <div class="table-responsive">
         <table class="table table-bordered text-center">
             <thead class="thead-dark">

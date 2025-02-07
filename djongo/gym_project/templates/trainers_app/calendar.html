@@ -2,7 +2,12 @@
 {% load custom_filters %}
 {% block content %}
 <div class="container">
-    <h1 class="text-center mb-4">Calendari</h1>
+    <h1 class="text-center mb-4">Calendari de Tortures Semanals 💪</h1>
+    
+    <div class="text-center mb-4">
+        <a href="{% url 'view_calendar' %}" class="btn btn-secondary">Canvia el calendari</a>
+    </div>
+    
     <div class="table-responsive">
         <table class="table table-bordered text-center">
             <thead class="thead-dark">
@@ -60,18 +65,27 @@
 </div>
 
 <style>
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
 .routine-cell {
     min-height: 40px;
+    min-width: 7vw;
     overflow: hidden;
     gap: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
+
 .routine-cell:hover {
     transform: scale(1.05);
 }
+
 .routine-name {
-    max-width: calc(100% - 30px);
+    display: inline-block;
+    max-width: calc(100% - 2vw);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
