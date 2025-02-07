@@ -14,7 +14,7 @@
                     </div>
                     <h5 class="card-title">Les Meves Rutines</h5>
                     <p class="card-text">Visualitza i gestiona les teves rutines d'entrenament.</p>
-                    <a href="{% url 'create_routine' %}" class="btn btn-primary btn-lg w-100">
+                    <a href="{% url 'routines' %}" class="btn btn-primary btn-lg w-100">
                         Gestionar Rutines
                     </a>
                 </div>
@@ -43,25 +43,25 @@
                     <div class="mb-3">
                         <i class="bi bi-cash-stack fs-1 text-success"></i>
                     </div>
-                    <h5 class="card-title">¡Mejora tu Plan! 💪</h5>
+                    <h5 class="card-title">¡Millora el teu Pla! 💪</h5>
                     <p class="card-text">
                         {% if user.plan_type == 'free' %}
-                            ¿En serio sigues con el plan gratuito? ¡Deja de ser tacaño y evoluciona! 🐢→🦁
+                        De debò encara estàs amb el pla gratuït? Deixa de ser tacany i evoluciona! 🐢→🦁
                         {% elif user.plan_type == 'basic' %}
-                            ¡Estás en lo básico! ¿No crees que mereces más dolor... digo, progreso? 😏
+                        Estàs en el bàsic! No creus que et mereixes més dolor... vull dir, progrés? 😏
                         {% elif user.plan_type == 'medium' %}
-                            ¡Casi en la cima! Solo te falta un empujoncito para ser una bestia total 💪
+                            Quasi al cim! Només et falta una empenta per ser una bèstia total 💪
                         {% else %}
-                            ¡Eres premium, baby! Pero siempre puedes revisar tu reinado 👑
+                        Ets premium, baby! Però sempre pots revisar el teu regnat 👑
                         {% endif %}
                     </p>
                     <a href="{% url 'subscription_plans' %}" class="btn btn-success btn-lg w-100 text-white">
                         {% if user.plan_type == 'free' %}
-                            ¡Deja de ser pobre! 🚀
+                            ¡Deixa de ser pobre! 🚀
                         {% elif user.plan_type == 'premium' %}
-                            Ver mi Imperio 👑
+                            Veure el meu Imperi 👑
                         {% else %}
-                            ¡Quiero más poder! 💪
+                            ¡Vull més poder! 💪
                         {% endif %}
                     </a>
                 </div>

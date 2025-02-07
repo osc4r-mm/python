@@ -20,11 +20,12 @@ def user_dashboard(request):
 def calendar_view(request):
     # Obtener días de la semana
     today = timezone.now()
+    day_names = dict(CalendarRoutine.DAY_OF_WEEK_CHOICES)
     week_days = []
     for i in range(7):
         day = today + timedelta(days=i)
         week_days.append({
-            'name': ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][day.weekday()],
+            'name': day_names[day.weekday()],
             'date': day.strftime('%d/%m'),
             'day_index': day.weekday(),
             'is_today': day.date() == today.date()
@@ -58,18 +59,16 @@ def join_routine(request, calendar_routine_id):
         
         # Verificaciones
         if calendar_routine.participants.count() >= 10:
-            messages.error(request, "¡Tarde piaste! Ya están los 10 valientes cupos ocupados 😢")
-            return redirect('calendar_view')
-            
+            messages.add_message(request, messages.ERROR, 'Massa tard, hi han 10 valents abans que tu', extra_tags='danger')
+        
         if not request.user.can_join_routine():
-            messages.error(request, 
-                f"¡Eh, tigre! Tu plan de pobre no da para tanto. ¡Actualízate! 💪")
-            return redirect('calendar_view')
+                messages.add_message(request, messages.ERROR, '¡Eh, tigre! El teu pla de pobre no da per mes. ¡Actualítzat! 💪', extra_tags='danger')
 
         # Todo OK, ¡a sufrir!
-        if request.user.join():  # Esto actualiza routines_usage
+        if request.user.join():
             calendar_routine.participants.add(request.user)
-            messages.success(request, "¡Bienvenido al club del dolor! 🏋️‍♂️")
+            if not request.user.can_join_routine():
+                messages.warning(request, "Has omplert totes les teves quotes")
         
     return redirect('calendar_view')
 
@@ -80,8 +79,7 @@ def leave_routine(request, calendar_routine_id):
         
         if request.user in calendar_routine.participants.all():
             calendar_routine.participants.remove(request.user)
-            request.user.leave()  # Esto actualiza routines_usage
-            messages.success(request, "¡Has escapado con éxito! Tu dignidad... esa es otra historia 😅")
+            request.user.leave()
         
     return redirect('calendar_view')
 
@@ -102,8 +100,6 @@ def assign_routine_to_calendar(request):
                 day_of_week=day,
                 time=time
             )
-            
-            messages.success(request, f"¡Nueva sesión de tortura programada! 😈")
             
     return redirect('calendar_view')
 
@@ -131,13 +127,13 @@ def subscription_plans(request):
             request.user.plan_type = plan_type
             request.user.save()
             
-            messages.warning(request, f"¡Adieu, ambicions! Benvingut al {plan_type}. El teu dolor sera mes economic ara. 💸🏋️‍♀️")
+            messages.warning(request, f"¡Adeu, ambicions! Benvingut al {plan_type}. El teu dolor sera mes economic ara. 💸🏋️‍♀️")
         
         else:
             if request.user.plan_type != plan_type:
                 request.user.plan_type = plan_type
                 request.user.save()
-                messages.success(request, "¡Nivel de sufrimiento actualizado! 💪")
+                messages.success(request, "¡Nivell de patiment actualitzat! 💪")
         
         return redirect('user')
     
@@ -146,3 +142,14 @@ def subscription_plans(request):
         'current_plan': request.user.plan_type
     }
     return render(request, 'users_app/subscriptions.html', context)
+
+@login_required
+@role_required('user')
+def view_routines(request):
+    all_sessions = list(CalendarRoutine.objects.filter(participants=request.user))
+    all_sessions.sort(key=lambda s: (s.day_of_week, s.time))
+
+    context = {
+        'routines': all_sessions
+    }
+    return render(request, 'users_app/my_routines.html', context)

@@ -8,4 +8,5 @@ urlpatterns = [
     path('join/<int:calendar_routine_id>/', views.join_routine, name='join_routine'),
     path('leave/<int:calendar_routine_id>/', views.leave_routine, name='leave_routine'),
     path('subscriptions/', views.subscription_plans, name='subscription_plans'),
+    path('routines/', views.view_routines, name='routines'),
     ]

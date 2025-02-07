@@ -1,10 +1,8 @@
 {% extends 'users_app/base.html' %}
 {% load custom_filters %}
-
 {% block content %}
 <div class="container">
     <h1 class="text-center mb-4">Calendario de Torturas Semanales 💪</h1>
-
     <div class="table-responsive">
         <table class="table table-bordered text-center">
             <thead class="thead-dark">
@@ -23,31 +21,37 @@
                 <tr>
                     <td class="align-middle bg-light"><strong>{{ hour }}</strong></td>
                     {% for day in week_days %}
-                    <td class="align-middle">
+                    <td class="align-middle p-0">
                         {% with day_data=calendar_data|get_item:day.day_index %}
                         {% with calendar_routine=day_data|get_item:hour %}
                         {% if calendar_routine %}
-                            <div class="routine-card">
-                                <h6>{{ calendar_routine.routine.name }}</h6>
-                                <small class="text-muted">{{ calendar_routine.participants.count }}/10 participantes</small>
-                                
-                                {% if request.user in calendar_routine.participants.all %}
-                                    <form action="{% url 'leave_routine' calendar_routine.id %}" method="POST" class="mt-2">
+                        <div class="routine-card" 
+                             style="background-color: {{ calendar_routine.routine.background_color }}">
+                            <div class="routine-content">
+                                <h6 class="routine-title">{{ calendar_routine.routine.name }}</h6>
+                                <div class="card-info">
+                                    <span class="participants">
+                                        {{ calendar_routine.participants.count }}/10
+                                    </span>
+                                    {% if request.user in calendar_routine.participants.all %}
+                                    <form action="{% url 'leave_routine' calendar_routine.id %}" method="POST" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-warning btn-sm">
-                                            ¡Socorro, sácame de aquí! 🏃‍♂️
+                                        <button type="submit" class="btn btn-warning btn-xs">
+                                            🏃‍♂️ ¡Fugir!
                                         </button>
                                     </form>
-                                {% else %}
-                                    <form action="{% url 'join_routine' calendar_routine.id %}" method="POST" class="mt-2">
+                                    {% else %}
+                                    <form action="{% url 'join_routine' calendar_routine.id %}" method="POST" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-success btn-sm" 
+                                        <button type="submit" class="btn btn-success btn-xs"
                                                 {% if calendar_routine.participants.count >= 10 or not user.can_join_routine %}disabled{% endif %}>
-                                            ¡Me apunto al dolor! 💪
+                                            💪 ¡Unir-se!
                                         </button>
                                     </form>
-                                {% endif %}
+                                    {% endif %}
+                                </div>
                             </div>
+                        </div>
                         {% endif %}
                         {% endwith %}
                         {% endwith %}
@@ -59,4 +63,64 @@
         </table>
     </div>
 </div>
+
+<style>
+.routine-card {
+    padding: 0.5rem;
+    border-radius: 1px;
+    min-height: 70px;
+    transition: transform 0.2s ease;
+}
+
+.routine-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.routine-title {
+    font-weight: 600;
+    margin: 0 0 0.3rem 0;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.participants {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.2rem 0.4rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+}
+
+.btn-xs {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border-radius: 3px;
+}
+
+.btn-warning {
+    background-color: rgba(255, 193, 7, 0.9);
+    border-color: transparent;
+}
+
+.btn-success {
+    background-color: rgba(40, 167, 69, 0.9);
+    border-color: transparent;
+}
+
+.btn[disabled] {
+    opacity: 0.6;
+}
+</style>
 {% endblock %}

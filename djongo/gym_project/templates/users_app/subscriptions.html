@@ -14,19 +14,19 @@
                 <div class="card-body d-flex flex-column">
                     <h1 class="card-title text-center">0€<small class="text-muted">/mes</small></h1>
                     <ul class="list-unstyled mt-3 mb-4">
-                        <li class="mb-2">✨ 0 rutinas simultáneas</li>
-                        <li class="mb-2">❌ Sin acceso a clases premium</li>
-                        <li class="mb-2">❌ Sin descuentos en la tienda</li>
-                        <li class="mb-2">😢 Solo puedes mirar y llorar</li>
+                        <li class="mb-2">✨ 0 rutines simultànies</li>
+                        <li class="mb-2">❌ Sense acces a clases premium</li>
+                        <li class="mb-2">❌ Sense descomptes a la tenda</li>
+                        <li class="mb-2">😢 Nomes pots mirar i plorar</li>
                     </ul>
                     <form method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="plan_type" value="free">
                         <button type="submit" class="btn btn-outline-primary mt-auto w-100" {% if user.plan_type == 'free' %}disabled{% endif %}>
                             {% if user.plan_type == 'free' %}
-                                Plan Actual 🥺
+                                Pla Actual 🥺
                             {% else %}
-                                ¡Quiero ser pobre! 
+                                ¡Vull ser pobre! 
                             {% endif %}
                         </button>
                     </form>
@@ -44,19 +44,19 @@
                 <div class="card-body d-flex flex-column">
                     <h1 class="card-title text-center">19.99€<small class="text-muted">/mes</small></h1>
                     <ul class="list-unstyled mt-3 mb-4">
-                        <li class="mb-2">💪 1 rutina simultánea</li>
-                        <li class="mb-2">✅ Acceso básico a clases</li>
-                        <li class="mb-2">🏪 5% descuento en tienda</li>
-                        <li class="mb-2">🎯 Asesoramiento básico</li>
+                        <li class="mb-2">💪 1 rutina simultània</li>
+                        <li class="mb-2">✅ Acces bàsic a classes</li>
+                        <li class="mb-2">🏪 5% descompte a la tenda</li>
+                        <li class="mb-2">🎯 Assessorament básic</li>
                     </ul>
                     <form method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="plan_type" value="basic">
                         <button type="submit" class="btn btn-info text-white mt-auto w-100" {% if user.plan_type == 'basic' %}disabled{% endif %}>
                             {% if user.plan_type == 'basic' %}
-                                Plan Actual 💪
+                                Pla Actual 💪
                             {% else %}
-                                ¡Quiero empezar a sufrir!
+                                ¡Vull començar a patir!
                             {% endif %}
                         </button>
                     </form>
@@ -69,24 +69,24 @@
         <div class="col">
             <div class="card h-100 shadow-sm border-primary">
                 <div class="card-header text-center bg-primary text-white">
-                    <h5 class="my-0 font-weight-bold">Máquina</h5>
+                    <h5 class="my-0 font-weight-bold">Màquina</h5>
                 </div>
                 <div class="card-body d-flex flex-column">
                     <h1 class="card-title text-center">29.99€<small class="text-muted">/mes</small></h1>
                     <ul class="list-unstyled mt-3 mb-4">
-                        <li class="mb-2">🔥 3 rutinas simultáneas</li>
-                        <li class="mb-2">✨ Acceso a clases premium</li>
-                        <li class="mb-2">🏪 15% descuento en tienda</li>
-                        <li class="mb-2">👊 Asesoramiento personalizado</li>
+                        <li class="mb-2">🔥 3 rutines simultáneas</li>
+                        <li class="mb-2">✨ Acces a classes premium</li>
+                        <li class="mb-2">🏪 15% descompte a la tenda</li>
+                        <li class="mb-2">👊 Assessorament personalitzat</li>
                     </ul>
                     <form method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="plan_type" value="medium">
                         <button type="submit" class="btn btn-primary mt-auto w-100" {% if user.plan_type == 'medium' %}disabled{% endif %}>
                             {% if user.plan_type == 'medium' %}
-                                Plan Actual 🔥
+                                Pla Actual 🔥
                             {% else %}
-                                ¡A por todas!
+                                ¡A per totes!
                             {% endif %}
                         </button>
                     </form>
@@ -98,14 +98,14 @@
         <div class="col">
             <div class="card h-100 shadow-sm border-warning">
                 <div class="card-header text-center bg-warning text-dark">
-                    <h5 class="my-0 font-weight-bold">Bestia Mode</h5>
+                    <h5 class="my-0 font-weight-bold">Bèstia Mode</h5>
                 </div>
                 <div class="card-body d-flex flex-column">
                     <h1 class="card-title text-center">49.99€<small class="text-muted">/mes</small></h1>
                     <ul class="list-unstyled mt-3 mb-4">
-                        <li class="mb-2">🌟 Rutinas ilimitadas</li>
-                        <li class="mb-2">👑 Acceso VIP a todo</li>
-                        <li class="mb-2">🏪 25% descuento en tienda</li>
+                        <li class="mb-2">🌟 Rutines il·limitadas</li>
+                        <li class="mb-2">👑 Acces VIP a tot</li>
+                        <li class="mb-2">🏪 25% descompte a la tenda</li>
                         <li class="mb-2">🎯 Entrenador personal</li>
                     </ul>
                     <form method="POST">
@@ -113,9 +113,9 @@
                         <input type="hidden" name="plan_type" value="premium">
                         <button type="submit" class="btn btn-warning mt-auto w-100" {% if user.plan_type == 'premium' %}disabled{% endif %}>
                             {% if user.plan_type == 'premium' %}
-                                Plan Actual 👑
+                                Pla Actual 👑
                             {% else %}
-                                ¡Modo Bestia ON!
+                                ¡Mode Bèstia ON!
                             {% endif %}
                         </button>
                     </form>

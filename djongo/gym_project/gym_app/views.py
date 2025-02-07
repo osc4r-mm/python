@@ -14,7 +14,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registre completat amb èxit!')
-            return redirect('dashboard')
+            return redirect('login')
     else:
         form = UserRegistrationForm()
     return render(request, 'gym_app/register.html', {'form': form})
@@ -29,7 +29,6 @@ def user_login(request):
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, 'Has iniciat sessió correctament!')
                 return redirect('dashboard')
             else:
                 messages.add_message(request, messages.ERROR, "Credencials incorrectes", extra_tags='danger')
@@ -95,15 +94,12 @@ def profile(request):
 # Vista per editar el perfil de l'usuari (requereix estar autenticat)
 @login_required
 def edit_profile(request):
-    if request.user.role == 'trainer':
-        base_template = 'trainers_app/base.html'
-    elif request.user.role == 'user':
-        base_template = 'users_app/base.html'
+    base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
 
     if request.method == 'POST':
-        form = EditProfileForm(request.POST, instance=request.user)  # Actualitza el perfil de l'usuari actual
+        form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
-            form.save()  # Guarda els canvis en el perfil
+            form.save()
             messages.success(request, 'Perfil actualitzat exitosament')
             return redirect('profile')
     else:
@@ -136,14 +132,15 @@ def logout_view(request):
 
 @login_required
 def view_routine(request, routine_id):
+    base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
     routine = get_object_or_404(Routine, id=routine_id)
     routine_exercises = routine.routineexercise_set.all()
-
     total_duration = routine.get_total_duration
     
     context = {
         'routine': routine,
         'routine_exercises': routine_exercises,
         'total_duration': total_duration,
+        'base_template': base_template
     }
-    return render(request, 'trainers_app/routine.html', context)
+    return render(request, 'gym_app/routine.html', context)

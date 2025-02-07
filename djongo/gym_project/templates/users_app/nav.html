@@ -11,8 +11,14 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
-                                <a class="dropdown-item" href="{% url 'create_routine' %}">
-                                    <i class="bi bi-plus-circle me-2"></i>Crear Rutina
+                                <a class="dropdown-item" href="{% url 'routines' %}">
+                                    Gestionar Rutines
+                                </a>
+                                <a class="dropdown-item" href="{% url 'calendar_view' %}">
+                                    Veure Calendari
+                                </a>
+                                <a class="dropdown-item" href="{% url 'subscription_plans' %}">
+                                    Subscripcions
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>

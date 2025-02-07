@@ -28,7 +28,7 @@ def view_routines(request):
     context = {
         'routines': routines
     }
-    return render(request, 'trainers_app/routines.html', context)
+    return render(request, 'gym_app/routines.html', context)
 
 def handle_routine_form(request, routine=None):
     is_editing = routine is not None
@@ -54,19 +54,27 @@ def create_routine(request):
 
     if request.method == 'POST':
         if routine_form.is_valid() and formset.is_valid():
-            routine = routine_form.save(commit=False)
-            routine.trainer = request.user
-            routine.save()
+            total_duration = sum(
+                form.cleaned_data['duration']
+                for form in formset
+                if form.cleaned_data and 'duration' in form.cleaned_data and not form.cleaned_data.get('DELETE', False)
+            )
 
-            for form in formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                    routine_exercise = form.save(commit=False)
-                    routine_exercise.routine = routine
-                    routine_exercise.save()
+            if total_duration > 60:
+                messages.add_message(request, messages.ERROR, 'La rutina no pot durar més de 60 minuts.', extra_tags='danger')
+            else:
+                routine = routine_form.save(commit=False)
+                routine.trainer = request.user
+                routine.save()
 
-            messages.success(request, 'Rutina creada correctament.')
-            return redirect('view_routines')
-            
+                for form in formset:
+                    if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                        routine_exercise = form.save(commit=False)
+                        routine_exercise.routine = routine
+                        routine_exercise.save()
+
+                messages.success(request, 'Rutina creada correctament.')
+                return redirect('view_routines')
         else:
             messages.add_message(request, messages.ERROR, 'Error al crear la rutina.', extra_tags='danger')
 
@@ -77,6 +85,7 @@ def create_routine(request):
     }
     return render(request, 'trainers_app/form_routine.html', context)
 
+
 @login_required
 @role_required('trainer')
 def edit_routine(request, routine_id):
@@ -86,12 +95,14 @@ def edit_routine(request, routine_id):
     if request.method == 'POST':
         if routine_form.is_valid() and formset.is_valid():
             total_duration = sum(
-            form.cleaned_data.get('duration', 0) 
-            for form in formset 
-            if form.cleaned_data and not form.cleaned_data.get('DELETE', False)
-        )
+                form.cleaned_data['duration']
+                for form in formset 
+                if form.cleaned_data and 'duration' in form.cleaned_data and not form.cleaned_data.get('DELETE', False)
+            )
 
-            if total_duration < 60:
+            if total_duration > 60:
+                messages.add_message(request, messages.ERROR, 'La rutina no pot durar més de 60 minuts.', extra_tags='danger')
+            else:
                 routine_form.save()
 
                 for form in formset:
@@ -104,8 +115,6 @@ def edit_routine(request, routine_id):
 
                 messages.success(request, 'Rutina editada correctament')
                 return redirect('view_routines')
-            else:
-                messages.add_message(request, messages.ERROR, 'La rutina no pot durar mes de 60 minuts.', extra_tags='danger')
         else:
             messages.add_message(request, messages.ERROR, 'Error a l\'editar la rutina.', extra_tags='danger')
 
@@ -254,8 +263,6 @@ def assign_routine_to_calendar(request):
                 day_of_week=day,
                 time=hour
             )
-
-        return redirect('view_calendar')
 
     return redirect('view_calendar')
 

@@ -1,10 +1,10 @@
 {% extends 'trainers_app/base.html' %}
 
 {% block content %}
-    <h1 class="text-center mb-4">Lista de Rutinas</h1>
+    <h1 class="text-center mb-4">Llista de Rutines</h1>
            
     <div class="text-center mb-4">
-        <a href="{% url 'create_routine' %}" class="btn btn-primary btn-lg">Crear Nueva Rutina</a>
+        <a href="{% url 'create_routine' %}" class="btn btn-primary btn-lg">Crear Nova Rutina</a>
     </div>
 
     {% if routines %}
@@ -16,11 +16,11 @@
                             <h5 class="card-title mb-0">{{ routine.name }}</h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>Dificultad:</strong> {{ routine.difficulty }}</p>
-                            <p><strong>Duración total:</strong> {{ routine.total_duration }} minutos</p>
+                            <p><strong>Dificultat:</strong> {{ routine.difficulty }}</p>
+                            <p><strong>Duració total:</strong> {{ routine.total_duration }} minutos</p>
                             <p><strong>Entrenador:</strong> {{ routine.trainer.first_name }} {{ routine.trainer.last_name }}</p>
                             <div class="d-flex justify-content-left" style="gap: 5px;">
-                                <a href="{% url 'view_routine' routine.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                                <a href="{% url 'view_routine' routine.id %}" class="btn btn-primary btn-sm">Veure Detalls</a>
     
                                 <a href="{% url 'edit_routine' routine.id %}" class="btn btn-warning btn-sm">Editar</a>
     
@@ -35,6 +35,6 @@
             {% endfor %}
         </div>
     {% else %}
-        <p class="text-center text-muted">No hay rutinas disponibles.</p>
+        <p class="text-center text-muted">No hi ha rutines disponibles.</p>
     {% endif %}
 {% endblock %}

@@ -1,5 +1,30 @@
 {% extends 'users_app/base.html' %}
 
 {% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">📅 Les Meves Rutines</h1>
 
+    {% if routines %}
+        {# Agrupamos las rutinas por día de la semana #}
+        {% regroup routines by day_of_week as day_groups %}
+        <div class="list-group">
+            {% for group in day_groups %}
+                <h3 class="mt-4 text-primary">{{ group.list.0.get_day_of_week_display }}</h3>
+                {% for routine in group.list %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">{{ routine.routine.name }}</h5>
+                            <p class="mb-0"><strong>Hora:</strong> {{ routine.time|time:"H:i" }}</p>
+                        </div>
+                        <a href="{% url 'view_routine' routine.routine.id %}" class="btn btn-primary btn-sm">
+                            Veure Detalls
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted text-center">No tens cap rutina programada! 📅💪</p>
+    {% endif %}
+</div>
 {% endblock %}

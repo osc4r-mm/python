@@ -1,6 +1,26 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
+import random
+from bson.decimal128 import Decimal128
+
+def generate_random_color():
+    # Generamos colores pastel suaves
+    hue = random.random()  # Tono aleatorio
+    saturation = random.uniform(0.3, 0.7)  # Saturación moderada
+    value = random.uniform(0.8, 1.0)  # Valor alto para colores pastel
+    
+    # Convertimos HSV a RGB
+    import colorsys
+    rgb = colorsys.hsv_to_rgb(hue, saturation, value)
+    
+    # Convertimos a hex
+    hex_color = '#{:02x}{:02x}{:02x}'.format(
+        int(rgb[0] * 255),
+        int(rgb[1] * 255),
+        int(rgb[2] * 255)
+    )
+    return hex_color
 
 # Definim el model d'usuari personalitzat
 class User(AbstractUser):
@@ -98,6 +118,11 @@ class User(AbstractUser):
             return True
         return False
     
+    def save(self, *args, **kwargs):
+        if isinstance(self.weight, Decimal128):
+            self.weight = self.weight.to_decimal()  # 🔥 Convierte Decimal128 a Decimal de Python
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
@@ -159,6 +184,7 @@ class Routine(models.Model):
         Exercise, 
         through='RoutineExercise',
     )
+    background_color = models.CharField(max_length=7, default=generate_random_color)
 
     def get_total_duration(self):
         return sum(
