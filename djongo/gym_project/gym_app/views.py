@@ -6,6 +6,12 @@ from django.utils import timezone
 from .models import *
 from .forms import *
 
+role_templates = {
+    'trainer': 'trainers_app/base.html',
+    'admin': 'admin_app/base.html',
+    'gerente': 'managers_app/base.html',
+    'user': 'users_app/base.html',  # Puedes definir una plantilla por defecto
+}
 
 def dashboard(request):
     if not request.user.is_authenticated:
@@ -43,7 +49,7 @@ def user_login(request):
 # Vista per mostrar el perfil de l'usuari (requereix estar autenticat)
 @login_required
 def profile(request):
-    base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
+    base_template = role_templates.get(request.user.role)    
     
     # Próximes rutines
     upcoming_sessions = []
@@ -86,7 +92,7 @@ def profile(request):
 # Vista per editar el perfil de l'usuari (requereix estar autenticat)
 @login_required
 def edit_profile(request):
-    base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
+    base_template = role_templates.get(request.user.role)
 
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=request.user)
@@ -124,7 +130,7 @@ def logout_view(request):
 
 @login_required
 def view_routine(request, routine_id):
-    base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
+    base_template = role_templates.get(request.user.role)
     
     routine = get_object_or_404(Routine, id=routine_id)
     routine_exercises = routine.routineexercise_set.all()

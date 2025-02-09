@@ -1,0 +1,85 @@
+{% extends 'admin_app/base.html' %}
+{% block content %}
+<div class="container py-4">
+    <h1 class="text-center fw-bold mb-4">Llistat d'Usuaris</h1>
+    <div class="card shadow-sm mx-auto" style="max-width: 95%;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">ID</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Usuari</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Nom</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Cognom</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Email</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Altura</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Pes</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Edat</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Sexe</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Rol</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Pla</th>
+                            <th class="px-3 py-3 text-center small fw-bold text-uppercase">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-0">
+                        {% for user in users %}
+                        <tr class="border-bottom">
+                            <td class="px-3 py-2 text-center">{{ user.id }}</td>
+                            <td class="px-3 py-2 text-center">
+                                {{ user.username }}
+                                {% if user == request.user %}
+                                <span class="badge bg-danger ms-2">Tú</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-3 py-2 text-center">{{ user.first_name }}</td>
+                            <td class="px-3 py-2 text-center">{{ user.last_name }}</td>
+                            <td class="px-3 py-2 text-center">{{ user.email }}</td>
+                            <td class="px-3 py-2 text-center">{{ user.height|default:"—" }}</td>
+                            <td class="px-3 py-2 text-center">{{ user.weight|default:"—" }}</td>
+                            <td class="px-3 py-2 text-center">{{ user.age|default:"—" }}</td>
+                            <td class="px-3 py-2 text-center">{{ user.get_gender_display|default:"—" }}</td>
+                            <td class="px-3 py-2 text-center">
+                                <span class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'trainer' %}bg-success{% elif user.role == 'gerent' %}bg-warning{% else %}bg-info{% endif %} rounded-pill">
+                                    {{ user.get_role_display }}
+                                </span>
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <span class="badge rounded-pill {% if user.plan_type == 'free' %}bg-secondary{% elif user.plan_type == 'basic' %}bg-info{% elif user.plan_type == 'medium' %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ user.get_plan_type_display }}
+                                </span>
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <a href="{% url 'edit_user' user.id %}" class="btn btn-primary btn-sm rounded-pill shadow-sm transition">
+                                    <i class="bi bi-pencil-square me-1"></i>Editar
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="12" class="text-center py-4 text-muted">No s'han trobat usuaris.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2) !important;
+    }
+
+    tr {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+{% endblock %}

@@ -4,7 +4,6 @@
             <a class="navbar-brand" href="{% url 'home' %}">Gimnàs</a>
             <div id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <!-- Desplegable per users -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle me-1"></i>{{ user.username }}
@@ -13,6 +12,9 @@
                             <li>
                                 <a class="dropdown-item" href="{% url 'register' %}">
                                     <i class="bi bi-shield-lock me-2"></i>Registrar usuaris
+                                </a>
+                                <a class="dropdown-item" href="{% url 'list_users' %}">
+                                    <i class="bi bi-person-gear me-2"></i>Rols
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>

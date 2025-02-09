@@ -9,14 +9,12 @@
                         <div class="card-body p-5">
                             <div class="row mb-2">
                                 <div class="col-12 text-center">
-                                    <h2 class="display-6 fw-bold text-primary mb-2">👤 El teu perfil</h2>
-                                    <p class="text-muted">Personalitza la teva informació com més t'agradi</p>
+                                    <h2 class="display-6 fw-bold text-primary mb-2">👤 Perfil de {{ form.first_name.value }} {{ form.last_name.value }}</h2>
                                 </div>
                             </div>
                             <form method="post" class="needs-validation" novalidate>
                                 {% csrf_token %}
                                 
-                                <!-- Información Personal -->
                                 <div class="mb-4">
                                     <h4 class="fw-bold mb-2">Informació Personal</h4>
                                     <div class="row g-4">
@@ -33,7 +31,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Cuenta -->
                                 <div class="mb-4">
                                     <div class="row g-4">
                                         <div class="col-md-6">
@@ -49,34 +46,44 @@
                                     </div>
                                 </div>
 
-                                <!-- Datos Físicos -->
                                 <div class="mb-4">
-                                    <h4 class="fw-bold mb-2">Dades Físiques</h4>
-                                    <div class="row g-4">
-                                        <div class="col-md-3">
-                                            <label for="{{ form.height.id_for_label }}" class="form-label fw-semibold">Altura (cm)</label>
+                                    <h4 class="fw-bold mb-2">Dades</h4>
+                                    <div class="row g-4 mb-2">
+                                        <div class="col-md-4">
+                                            <label for="{{ form.height.id_for_label }}" class="form-label fw-semibold">{{ form.height.label }}</label>
                                             {{ form.height }}
                                             <div class="text-danger small mt-1">{{ form.height.errors }}</div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label for="{{ form.weight.id_for_label }}" class="form-label fw-semibold">Pes (kg)</label>
+                                        <div class="col-md-4">
+                                            <label for="{{ form.weight.id_for_label }}" class="form-label fw-semibold">{{ form.weight.label }}</label>
                                             {{ form.weight }}
                                             <div class="text-danger small mt-1">{{ form.weight.errors }}</div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <label for="{{ form.age.id_for_label }}" class="form-label fw-semibold">Edat (anys)</label>
                                             {{ form.age }}
                                             <div class="text-danger small mt-1">{{ form.age.errors }}</div>
                                         </div>
-                                        <div class="col-md-3">
+                                    </div>
+                                    <div class="row g-4">
+                                        <div class="col-md-4">
                                             <label for="{{ form.gender.id_for_label }}" class="form-label fw-semibold">Sexe</label>
                                             {{ form.gender }}
                                             <div class="text-danger small mt-1">{{ form.gender.errors }}</div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <label for="{{ form.role.id_for_label }}" class="form-label fw-semibold">Rol</label>
+                                            {{ form.role }}
+                                            <div class="text-danger small mt-1">{{ form.role.errors }}</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="{{ form.plan_type.id_for_label }}" class="form-label fw-semibold">Subscripcio</label>
+                                            {{ form.plan_type }}
+                                            <div class="text-danger small mt-1">{{ form.plan_type.errors }}</div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Contraseña -->
                                 <div class="mb-5">
                                     <h4 class="fw-bold mb-2">Seguretat</h4>
                                     <div class="row">
@@ -88,7 +95,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Botones de acción -->
                                 <div class="d-flex gap-3 justify-content-end">
                                     <a href="{% url 'profile' %}" class="btn btn-secondary btn-lg px-5 rounded-3">Cancelar</a>
                                     <button type="submit" class="btn btn-primary btn-lg px-5 rounded-3">
@@ -99,7 +105,6 @@
 
                             <hr class="my-5">
 
-                            <!-- Zona Peligrosa -->
                             <div class="bg-danger bg-opacity-10 rounded-4 p-4 text-center">
                                 <h3 class="text-danger fw-bold mb-3">⚠️ Zona Perillosa</h3>
                                 <p class="text-danger mb-4">Compte! Aquesta acció no es pot desfer.</p>
@@ -114,7 +119,7 @@
         </div>
     </div>
 
-    <!-- Modal de confirmación -->
+    <!-- Modal de confirmació -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow rounded-4">
@@ -123,7 +128,7 @@
                         <span class="display-1 text-danger">⚠️</span>
                     </div>
                     <h4 class="fw-bold mb-3">¿Estàs segur?</h4>
-                    <p class="text-muted mb-4">Aquesta acció eliminarà permanentment el teu compte i totes les teves dades.</p>
+                    <p class="text-muted mb-4">Aquesta acció eliminarà permanentment el compte i totes les seves dades.</p>
                     <div class="d-flex gap-3 justify-content-center">
                         <button type="button" class="btn btn-secondary px-4 rounded-3" data-bs-dismiss="modal">
                             No, cancel·lar
