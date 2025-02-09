@@ -122,7 +122,7 @@ def subscription_plans(request):
                 request.user.save()
                 messages.success(request, "¡Nivell de patiment actualitzat! 💪")
         
-        return redirect('usuari')
+        return redirect('user')
     
     context = {
         'current_plan': request.user.plan_type

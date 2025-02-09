@@ -15,17 +15,15 @@ def gerent_dashboard(request):
 @login_required
 @role_required('gerent')
 def list_users(request):
-    # Parámetros de búsqueda y ordenamiento (los mismos que ya tenías, máquina)
+    # Parámetres de cerca i ordenament
     search_query = request.GET.get('search', '')
     search_field = request.GET.get('search_field', 'all')
     sort_field = request.GET.get('sort', 'username')
     sort_direction = request.GET.get('direction', 'asc')
     page_number = request.GET.get('page', 1)
 
-    # Tu queryset inicial
     users = User.objects.all()
 
-    # Aplicar búsqueda (igual que antes)
     if search_query:
         if search_field == 'all':
             users = users.filter(
@@ -41,15 +39,13 @@ def list_users(request):
             filter_kwargs = {f"{search_field}__icontains": search_query}
             users = users.filter(**filter_kwargs)
 
-    # Aplicar ordenamiento
     order_prefix = '-' if sort_direction == 'desc' else ''
     users = users.order_by(f'{order_prefix}{sort_field}')
 
-    # ¡NUEVO! Paginación
-    paginator = Paginator(users, 5)  # 5 usuarios por página, como pediste
+    # Paginacio
+    paginator = Paginator(users, 5)
     page_obj = paginator.get_page(page_number)
 
-    # Los headers para la tabla (que se te olvidaron antes, pillín)
     headers = [
         {'field': 'id', 'display': 'ID'},
         {'field': 'username', 'display': 'Usuari'},

@@ -224,7 +224,7 @@ def view_calendar_trainer(request):
             'name': dies_catala[i],
             'date': (start_of_week + timedelta(days=i)).strftime('%Y-%m-%d'),
             'is_today': (start_of_week + timedelta(days=i)).date() == today.date(),
-            'day_index': i, # (0 Dillunss, 6 Diumenge)
+            'day_index': i,
         }
         for i in range(7)
     ]
@@ -252,7 +252,7 @@ def view_calendar_trainer(request):
     }
     return render(request, 'trainers_app/calendar.html', context)
 
-# Vista per assignar uan rutina al calendari
+# Vista per assignar una rutina al calendari
 @login_required
 @role_required('entrenador')
 def assign_routine_to_calendar(request):
