@@ -40,7 +40,7 @@
                             <td class="px-3 py-2 text-center">{{ user.age|default:"—" }}</td>
                             <td class="px-3 py-2 text-center">{{ user.get_gender_display|default:"—" }}</td>
                             <td class="px-3 py-2 text-center">
-                                <span class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'trainer' %}bg-success{% elif user.role == 'gerent' %}bg-warning{% else %}bg-info{% endif %} rounded-pill">
+                                <span class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'entrenador' %}bg-success{% elif user.role == 'gerent' %}bg-warning{% else %}bg-info{% endif %} rounded-pill">
                                     {{ user.get_role_display }}
                                 </span>
                             </td>

@@ -15,7 +15,7 @@
                     </div>
                     <h3 class="mb-0">{{ user.username }}</h3>
                     <p class="text-muted">{{ user.get_role_display }}</p>
-                    {% if user.role == "user" %}
+                    {% if user.role == "usuari" %}
                         <div class="plan-badge mb-3">
                             <span class="badge {% if user.plan_type == 'premium' %}bg-warning{% elif user.plan_type == 'medium' %}bg-primary{% elif user.plan_type == 'basic' %}bg-info{% else %}bg-secondary{% endif %} p-2">
                                 {% if user.plan_type == 'premium' %}👑 Beast Mode
@@ -52,7 +52,7 @@
                                 <label class="text-muted">Email</label>
                                 <p class="mb-3">{{ user.email }}</p>
                             </div>
-                            {% if user.role == "user" %}
+                            {% if user.role == "usuari" %}
                             <div class="info-group">
                                 <label class="text-muted">Pla Actual</label>
                                 <p class="mb-3">{{ user.get_plan_type_display }}</p>
@@ -95,7 +95,7 @@
 
                     
 
-                    {% if user.role == "user" %}
+                    {% if user.role == "usuari" %}
                     <div class="mt-4">
                         <h6 class="mb-3">🎯 Pròximes Sessions de Tortura</h6>
                         <div class="table-responsive">

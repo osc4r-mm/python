@@ -133,7 +133,7 @@
                         <button type="button" class="btn btn-secondary px-4 rounded-3" data-bs-dismiss="modal">
                             No, cancel·lar
                         </button>
-                        <form method="POST" action="{% url 'delete_user' %}">
+                        <form method="POST" action="{% url 'delete_user_admin' user_to_edit.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger px-4 rounded-3">
                                 Sí, eliminar compte

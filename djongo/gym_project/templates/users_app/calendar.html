@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <h1 class="text-center mb-4">Calendari de Tortures Semanals 💪</h1>
-    {% if user.role == 'trainer' %}
+    {% if user.role == 'entrenador' %}
     <div class="text-center mb-4">
         <a href="{% url 'view_calendar_trainer' %}" class="btn btn-secondary">Canvia el calendari</a>
     </div>
@@ -38,7 +38,7 @@
                                     <span class="participants">
                                         {{ calendar_routine.participants.count }}/10
                                     </span>
-                                    {% if user.role == 'user' %}
+                                    {% if user.role == 'usuari' %}
                                         {% if request.user in calendar_routine.participants.all %}
                                         <form action="{% url 'leave_routine' calendar_routine.id %}" method="POST" class="d-inline">
                                             {% csrf_token %}

@@ -73,7 +73,7 @@
                             </div>
                         </div>
 
-                        {% if user.role == 'trainer' %}
+                        {% if user.role == 'entrenador' %}
                         <div class="btn-group">
                             <a href="{% url 'edit_exercise' r_ex.exercise.id %}" 
                                class="btn btn-outline-primary btn-sm">
@@ -102,7 +102,7 @@
         {% endfor %}
     </div>
     
-    {% if user.role == 'trainer' %}
+    {% if user.role == 'entrenador' %}
     <div class="mt-5 text-center">
         <a href="{% url 'view_routines' %}" class="btn btn-lg btn-secondary">
             <i class="bi bi-arrow-left"></i> Volver a las rutinas

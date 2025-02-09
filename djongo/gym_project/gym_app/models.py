@@ -25,7 +25,7 @@ def generate_random_color():
 # Definim el model d'usuari personalitzat
 class User(AbstractUser):
     ROLE_CHOICES = [
-        ('user', 'Usuari'),
+        ('usuari', 'Usuari'),
         ('entrenador', 'Entrenador'),
         ('gerent', 'Gerent'),
         ('admin', 'Administrador'),

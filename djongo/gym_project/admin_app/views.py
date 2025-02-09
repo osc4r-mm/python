@@ -57,7 +57,23 @@ def edit_user(request, user_id):
         form = AdminEditUserForm(instance=user_to_edit)
 
     context = {
-        'form': form, 
+        'form': form,
+        'user_to_edit': user_to_edit,
         'base_template': 'admin_app/base.html'
     }
     return render(request, 'admin_app/edit_user.html', context)
+
+# Vista per eliminar un usuari
+@login_required
+@role_required('admin')
+def delete_user(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == "POST":
+        user.delete()
+        messages.success(request, "El compte ha sigut eliminat exitosament.")
+        return redirect('list_users_admin')
+    
+    context = {
+        'user': user
+    }
+    return render(request, 'gym_app/delete_user.html', context)
