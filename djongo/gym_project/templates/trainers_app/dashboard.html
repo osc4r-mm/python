@@ -1,6 +1,6 @@
 {% extends 'trainers_app/base.html' %}
 
 {% block content %}
-    <h1 class="text-center mb-4">Benvingut {{ user.username }} al Dashboard de l'Entrenador</h1>
+    <h1 class="text-center mb-4">Benvingut {{ user.get_role_display }} {{ user.username }}</h1>
     <p class="text-center mb-4">Aquí pots gestionar les rutines i els exercicis.</p>
 {% endblock %}

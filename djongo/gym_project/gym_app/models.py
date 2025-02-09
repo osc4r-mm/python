@@ -25,8 +25,8 @@ def generate_random_color():
 # Definim el model d'usuari personalitzat
 class User(AbstractUser):
     ROLE_CHOICES = [
-        ('user', 'Usuari del Gimnàs'),
-        ('trainer', 'Entrenador'),
+        ('user', 'Usuari'),
+        ('entrenador', 'Entrenador'),
         ('gerent', 'Gerent'),
         ('admin', 'Administrador'),
     ]
@@ -46,8 +46,8 @@ class User(AbstractUser):
     }
 
     GENDER_CHOICES = [
-        ('male', 'Home'),
-        ('female', 'Dona'),
+        ('home', 'Home'),
+        ('dona', 'Dona'),
     ]
 
     email = models.EmailField(
@@ -168,7 +168,7 @@ class Routine(models.Model):
     trainer = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
-        limit_choices_to={'role': 'trainer'},
+        limit_choices_to={'role': 'entrenador'},
         null=True,
         blank=True,
     )

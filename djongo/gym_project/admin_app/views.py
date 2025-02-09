@@ -45,14 +45,14 @@ def edit_user(request, user_id):
         user_to_edit = User.objects.get(id=user_id)
     except User.DoesNotExist:
         messages.error(request, "El usuario no existe.")
-        return redirect('list_users')
+        return redirect('list_users_admin')
     
     if request.method == 'POST':
         form = AdminEditUserForm(request.POST, instance=user_to_edit)
         if form.is_valid():
             form.save()
             messages.success(request, f"Perfil de {user_to_edit.username} actualizado correctamente.")
-            return redirect('list_users')
+            return redirect('list_users_admin')
     else:
         form = AdminEditUserForm(instance=user_to_edit)
 

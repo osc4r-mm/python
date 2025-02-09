@@ -7,18 +7,18 @@ from .models import *
 from .forms import *
 
 role_templates = {
-    'trainer': 'trainers_app/base.html',
+    'entrenador': 'trainers_app/base.html',
     'admin': 'admin_app/base.html',
-    'gerente': 'managers_app/base.html',
-    'user': 'users_app/base.html',  # Puedes definir una plantilla por defecto
+    'gerent': 'gerent_app/base.html',
+    'usuari': 'users_app/base.html',
 }
 
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    if request.user.role == 'trainer':
+    if request.user.role == 'entrenador':
         return redirect('trainer')
-    if request.user.role == 'user':
+    if request.user.role == 'usuari':
         return redirect('user')
     if request.user.role == 'gerent':
         return redirect('gerent')
@@ -53,7 +53,7 @@ def profile(request):
     
     # Próximes rutines
     upcoming_sessions = []
-    if request.user.role == 'user':
+    if request.user.role == 'usuari':
         today = timezone.now()
         current_time = today.time()
         current_weekday = today.weekday()

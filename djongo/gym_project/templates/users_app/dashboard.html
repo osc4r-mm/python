@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container py-5">
-    <h1 class="text-center mb-4">Benvingut {{ user.username }}</h1>
+    <h1 class="text-center mb-4">Benvingut {{ user.get_role_display }} {{ user.username }}</h1>
 
     <div class="row g-4 justify-content-center">
         <!-- Rutines Card -->

@@ -9,13 +9,13 @@ from .forms import *
 
 # Vista default per l'entrenador
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def trainer_dashboard(request):
     return render(request, 'trainers_app/dashboard.html')
 
 # Vista per veure totes les rutines
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def view_routines(request):
     routines = Routine.objects.all()
 
@@ -50,7 +50,7 @@ def handle_routine_form(request, routine=None):
 
 # Vista per crear rutina
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def create_routine(request):
     routine_form, formset = handle_routine_form(request)
 
@@ -89,7 +89,7 @@ def create_routine(request):
 
 # Vista per editar rutina
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def edit_routine(request, routine_id):
     routine = get_object_or_404(Routine, id=routine_id)
     routine_form, formset = handle_routine_form(request, routine)
@@ -130,7 +130,7 @@ def edit_routine(request, routine_id):
 
 # Vista per eliminar rutina
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def delete_routine(request, routine_id):
     routine = get_object_or_404(Routine, pk=routine_id)
 
@@ -144,7 +144,7 @@ def delete_routine(request, routine_id):
 
 # Vista per veure tots els exercicis
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def view_exercises(request):
     exercises = Exercise.objects.all()
 
@@ -155,7 +155,7 @@ def view_exercises(request):
 
 # Vista per crear un exercici
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def create_exercise(request):
     if request.method == 'POST':
         form = ExerciseForm(request.POST,)
@@ -175,7 +175,7 @@ def create_exercise(request):
 
 # Vista per editar un exercici
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def edit_exercise(request, exercise_id):
     exercise = get_object_or_404(Exercise, pk=exercise_id)
 
@@ -199,7 +199,7 @@ def edit_exercise(request, exercise_id):
 
 # Vista per eliminar un exercici
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def delete_exercise(request, exercise_id):
     exercise = get_object_or_404(Exercise, pk=exercise_id)
 
@@ -254,7 +254,7 @@ def view_calendar_trainer(request):
 
 # Vista per assignar uan rutina al calendari
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def assign_routine_to_calendar(request):
     if request.method == 'POST':
         day = request.POST.get('day')
@@ -276,7 +276,7 @@ def assign_routine_to_calendar(request):
 
 # Vista per treure una rutina del calendari
 @login_required
-@role_required('trainer')
+@role_required('entrenador')
 def remove_routine_from_calendar(request, day, hour):
     try:
         # Convertir l'hora de string ("16:00") a objecte time

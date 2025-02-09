@@ -1,14 +1,75 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.forms import modelformset_factory
 from gym_app.utils import role_required
-from datetime import datetime, timedelta
-from django.contrib import messages
-from gym_app.models import *
+from django.core.paginator import Paginator
+from django.db.models import Q
+from gym_app.models import User
 from .forms import *
 
-# Vista default per l'entrenador
+# Vista default per l'admin'
 @login_required
 @role_required('gerent')
 def gerent_dashboard(request):
     return render(request, 'gerent_app/dashboard.html')
+
+@login_required
+@role_required('gerent')
+def list_users(request):
+    # Parámetros de búsqueda y ordenamiento (los mismos que ya tenías, máquina)
+    search_query = request.GET.get('search', '')
+    search_field = request.GET.get('search_field', 'all')
+    sort_field = request.GET.get('sort', 'username')
+    sort_direction = request.GET.get('direction', 'asc')
+    page_number = request.GET.get('page', 1)
+
+    # Tu queryset inicial
+    users = User.objects.all()
+
+    # Aplicar búsqueda (igual que antes)
+    if search_query:
+        if search_field == 'all':
+            users = users.filter(
+                Q(username__icontains=search_query) |
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query) |
+                Q(email__icontains=search_query) |
+                Q(gender__icontains=search_query) |
+                Q(role__icontains=search_query) |
+                Q(plan_type__icontains=search_query)
+            )
+        else:
+            filter_kwargs = {f"{search_field}__icontains": search_query}
+            users = users.filter(**filter_kwargs)
+
+    # Aplicar ordenamiento
+    order_prefix = '-' if sort_direction == 'desc' else ''
+    users = users.order_by(f'{order_prefix}{sort_field}')
+
+    # ¡NUEVO! Paginación
+    paginator = Paginator(users, 5)  # 5 usuarios por página, como pediste
+    page_obj = paginator.get_page(page_number)
+
+    # Los headers para la tabla (que se te olvidaron antes, pillín)
+    headers = [
+        {'field': 'id', 'display': 'ID'},
+        {'field': 'username', 'display': 'Usuari'},
+        {'field': 'first_name', 'display': 'Nom'},
+        {'field': 'last_name', 'display': 'Cognom'},
+        {'field': 'email', 'display': 'Email'},
+        {'field': 'height', 'display': 'Altura'},
+        {'field': 'weight', 'display': 'Pes'},
+        {'field': 'age', 'display': 'Edat'},
+        {'field': 'gender', 'display': 'Sexe'},
+        {'field': 'role', 'display': 'Rol'},
+        {'field': 'plan_type', 'display': 'Pla'}
+    ]
+
+    context = {
+        'users': page_obj,
+        'headers': headers,
+        'current_sort': sort_field,
+        'current_direction': sort_direction,
+        'search_query': search_query,
+        'search_field': search_field,
+    }
+    return render(request, 'gerent_app/list_users.html', context)

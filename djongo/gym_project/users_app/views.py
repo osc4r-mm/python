@@ -10,16 +10,16 @@ from datetime import timedelta
 
 # Vista default per l'usuari
 @login_required
-@role_required('user')
+@role_required('usuari')
 def user_dashboard(request):
-    if request.user.role != "user":
+    if request.user.role != 'usuari':
         return redirect("home")
     return render(request, 'users_app/dashboard.html')
 
 # Vista per veure el calendari
 @login_required
 def view_calendar_user(request):
-    base_template = 'trainers_app/base.html' if request.user.role == 'trainer' else 'users_app/base.html'
+    base_template = 'trainers_app/base.html' if request.user.role == 'entrenador' else 'users_app/base.html'
 
     # Obtenir dies de la setmana
     today = timezone.now()
@@ -58,7 +58,7 @@ def view_calendar_user(request):
 
 # Vista per unirse a una rutina del calendari
 @login_required
-@role_required('user')
+@role_required('usuari')
 def join_routine(request, calendar_routine_id):
     if request.method == 'POST':
         calendar_routine = get_object_or_404(CalendarRoutine, id=calendar_routine_id)
@@ -78,7 +78,7 @@ def join_routine(request, calendar_routine_id):
 
 # Vista per sortir d'una rutina del calendari
 @login_required
-@role_required('user')
+@role_required('usuari')
 def leave_routine(request, calendar_routine_id):
     if request.method == 'POST':
         calendar_routine = get_object_or_404(CalendarRoutine, id=calendar_routine_id)
@@ -122,7 +122,7 @@ def subscription_plans(request):
                 request.user.save()
                 messages.success(request, "¡Nivell de patiment actualitzat! 💪")
         
-        return redirect('user')
+        return redirect('usuari')
     
     context = {
         'current_plan': request.user.plan_type
@@ -131,7 +131,7 @@ def subscription_plans(request):
 
 # Vista per veure les rutines a las que esta apuntat l'usuari
 @login_required
-@role_required('user')
+@role_required('usuari')
 def view_routines(request):
     all_sessions = list(CalendarRoutine.objects.filter(participants=request.user))
     all_sessions.sort(key=lambda s: (s.day_of_week, s.time))
